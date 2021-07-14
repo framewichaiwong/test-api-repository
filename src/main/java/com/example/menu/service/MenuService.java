@@ -39,4 +39,11 @@ public class MenuService {
     public List<Menu> listByManagerIdAndTypeMenu(int managerId,String typeMenu) {
         return menuRepository.findByManagerIdAndTypeMenu(managerId,typeMenu);
     }
+
+    //------------------------------------------------------------------------------
+    // Set of customer
+
+    public List<Menu> listManagerIdAndTypeMenu(int managerId,String typeMenu) {
+        return menuRepository.findByManagerIdAndTypeMenu(managerId,typeMenu);
+    }
 }

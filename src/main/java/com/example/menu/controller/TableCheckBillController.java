@@ -20,21 +20,6 @@ public class TableCheckBillController {
     @Autowired
     private TableCheckBillService tableCheckBillService;
 
-    @PostMapping("/save")
-    public Object saveNumberTable(@RequestParam int managerId, @RequestParam int numberTable, TableCheckBill tableCheckBill) {
-        APIResponse response = new APIResponse();
-        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTable(managerId,numberTable);
-        if(checkDb==null){
-            TableCheckBill saveTableCheckBill = tableCheckBillService.saveNumberTable(tableCheckBill);
-            response.setStatus(1);
-            response.setMessage("save success");
-            response.setData(saveTableCheckBill);
-        }else{
-            response.setStatus(0);
-            response.setMessage("can't save");
-        }
-        return response;
-    }
 
     @PostMapping("/delete/{tableCheckBillId}")
     public Object deleteTableCheckBill(@PathVariable int tableCheckBillId) {
@@ -56,6 +41,25 @@ public class TableCheckBillController {
         APIResponse response = new APIResponse();
         List<TableCheckBill> listTableCheckBill = tableCheckBillService.listTableCheckBill();
         response.setData(listTableCheckBill);
+        return response;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------
+    // Set of customer
+
+    @PostMapping("/save")
+    public Object saveNumberTable(@RequestParam int managerId, @RequestParam int numberTable, TableCheckBill tableCheckBill) {
+        APIResponse response = new APIResponse();
+        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTable(managerId,numberTable);
+        if(checkDb==null){
+            TableCheckBill saveTableCheckBill = tableCheckBillService.saveNumberTable(tableCheckBill);
+            response.setStatus(1);
+            response.setMessage("save success");
+            response.setData(saveTableCheckBill);
+        }else{
+            response.setStatus(0);
+            response.setMessage("can't save");
+        }
         return response;
     }
 }

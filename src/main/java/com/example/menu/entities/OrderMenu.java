@@ -41,7 +41,7 @@ public class OrderMenu {
     private int managerId;
 
     @Column(name = "make_status")
-    private int makeStatus;
+    private String makeStatus;
 
     /// Column of dateTime,date,time save by form same. But will get data by pattern of @JsonFormat().
     // Time and Date

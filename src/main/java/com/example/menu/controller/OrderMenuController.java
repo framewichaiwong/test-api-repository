@@ -20,16 +20,6 @@ public class OrderMenuController {
     @Autowired
     private OrderMenuService orderMenuService;
 
-    @PostMapping("/saveOrder")
-    public Object saveOrder(OrderMenu orderMenu) {
-        APIResponse response = new APIResponse();
-        OrderMenu inputOrder = orderMenuService.saveOrder(orderMenu);
-        response.setStatus(1);
-        response.setMessage("Save Success");
-        response.setData(inputOrder);
-        return response;
-    }
-
     @PostMapping("/updateOrder/{orderId}")
     public Object updateOrder(@PathVariable int orderId,OrderMenu orderMenu) {
         APIResponse response = new APIResponse();
@@ -76,20 +66,33 @@ public class OrderMenuController {
         return response;
     }
 
-    @GetMapping("/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}")
-    public Object getOrderByManagerIdAndNumberTable(@PathVariable int managerId,@PathVariable int numberTable) {
-        APIResponse response = new APIResponse();
-        List<OrderMenu> getOrder = orderMenuService.getOrderByManagerIdAndNumberTable(managerId,numberTable);
-        response.setData(getOrder);
-        return response;
-    }
-
     //Get All
     @GetMapping("/getOrder")
     public Object getOrder() {
         APIResponse response = new APIResponse();
         List<OrderMenu> listOrder = orderMenuService.getOrder();
         response.setData(listOrder);
+        return response;
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Set of customer
+
+    @PostMapping("/saveOrder")
+    public Object saveOrder(OrderMenu orderMenu) {
+        APIResponse response = new APIResponse();
+        OrderMenu inputOrder = orderMenuService.saveOrder(orderMenu);
+        response.setStatus(1);
+        response.setMessage("Save Success");
+        response.setData(inputOrder);
+        return response;
+    }
+
+    @GetMapping("/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}")
+    public Object getOrderByManagerIdAndNumberTable(@PathVariable int managerId,@PathVariable int numberTable) {
+        APIResponse response = new APIResponse();
+        List<OrderMenu> getOrder = orderMenuService.getOrderByManagerIdAndNumberTable(managerId,numberTable);
+        response.setData(getOrder);
         return response;
     }
 }

@@ -94,4 +94,22 @@ public class UserManagerController {
         }
         return response;
     }
+
+    //-------------------------------------------------------------------------------------------------------------------------------
+    // Set of Customer
+
+    @GetMapping("/listUser/{managerId}")
+    public Object listUserManagerId(@PathVariable int managerId) {
+        APIResponse response = new APIResponse();
+        Optional<UserManager> userManager = userManagerService.listUserManagerId(managerId);
+        if(userManager.isPresent()) {
+            response.setStatus(1);
+            response.setMessage("List User Success");
+            response.setData(userManager);
+        }else {
+            response.setStatus(0);
+            response.setMessage("No Data");
+        }
+        return response;
+    }
 }

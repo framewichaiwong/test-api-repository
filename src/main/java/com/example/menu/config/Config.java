@@ -5,7 +5,13 @@ public class Config {
     public static final String[] ALLOW_API_PATH = new String[]{
             "/token_check",
             "/authorize",
-            "/userManager/saveUserManager"
+            "/userManager/saveUserManager",
+            "/userManager/listUser/{managerId}",
+            "/menu/getMenu/{managerId}/{typeMenu}",
+            "/order/saveOrder",
+            "/order/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}",
+            "/tableCheckBill/save",
+            "/orderCheckBill/save",
     };
 
 }

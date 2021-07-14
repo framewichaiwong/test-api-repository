@@ -30,4 +30,11 @@ public class UserManagerService {
     public Optional<UserManager> listUserManagerByManagerId(int managerId) {
         return userManagerRepository.findById(managerId);
     }
+
+    //----------------------------------------------------------------------------------------
+    // Set of customer
+
+    public Optional<UserManager> listUserManagerId(int managerId) {
+        return userManagerRepository.findById(managerId);
+    }
 }

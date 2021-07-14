@@ -79,20 +79,28 @@ public class MenuController {
         return response;
     }
 
-    /*@GetMapping("/getMenu/{managerId}")
-    public Object listMenuByManagerId(@PathVariable int managerId) {
-        APIResponse response = new APIResponse();
-        List<Menu> listMenu = menuService.listByManagerId(managerId);
-        response.setData(listMenu);
-        return response;
-    }*/
-
     @GetMapping("/getMenu/{typeMenu}")
     public Object listMenuByManagerIdAndTypeMenu(@PathVariable String typeMenu) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         List<Menu> listMenu = menuService.listByManagerIdAndTypeMenu(optUserManager.get().getManagerId(),typeMenu);
         response.setData(listMenu);
+        return response;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/getMenu/{managerId}/{typeMenu}")
+    public Object listMenuByManagerId(@PathVariable int managerId,@PathVariable String typeMenu) {
+        APIResponse response = new APIResponse();
+        List<Menu> listMenu = menuService.listManagerIdAndTypeMenu(managerId,typeMenu);
+        if(listMenu != null) {
+            response.setStatus(1);
+            response.setMessage("List Menu Success");
+            response.setData(listMenu);
+        }else {
+            response.setStatus(0);
+            response.setMessage("No Data");
+        }
         return response;
     }
 }
