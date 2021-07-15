@@ -6,6 +6,7 @@ public class Config {
             "/token_check",
             "/authorize",
             "/userManager/saveUserManager",
+
             "/userManager/listUser/{managerId}",
             "/menu/getMenu/{managerId}/{typeMenu}",
             "/order/saveOrder",
