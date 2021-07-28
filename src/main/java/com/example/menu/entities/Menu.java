@@ -14,10 +14,10 @@ public class Menu {
     @Column(name = "menu_id")
     private int menuId;
 
-    @Lob
+    /*@Lob
     @Basic(fetch = FetchType.LAZY) //ดึงทันที
     @Column(name = "picture")
-    private String picture;
+    private String picture;*/
 
     @Column(name = "name")
     private String name;
