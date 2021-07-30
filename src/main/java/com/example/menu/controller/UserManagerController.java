@@ -44,7 +44,7 @@ public class UserManagerController {
         return response;
     }
 
-    @PostMapping("/loginUserManager")
+    /*@PostMapping("/loginUserManager")
     public Object loginUserManager(@RequestParam String userName,@RequestParam String passWord) {
         APIResponse response = new APIResponse();
         UserManager user = userManagerService.loginByUserNameAndPassWord(userName,passWord);
@@ -57,22 +57,28 @@ public class UserManagerController {
             response.setMessage("Can't Success");
         }
         return response;
-    }
+    }*/
 
     @PostMapping("/updateUserManager/{managerId}")
     public Object updateUserManager(@PathVariable int managerId,UserManager userManager) {
         APIResponse response = new APIResponse();
-        Optional<UserManager> checkId = userManagerRepository.findById(managerId);
-        UserManager checkUserManager = userManagerRepository.findByUserName(userManager.getUserName());
-        if(checkId.isPresent() && checkUserManager != null) {
-            userManager.setPassWord(encoderUtil.passwordEncoder().encode(userManager.getPassWord()));
-            UserManager user = userManagerService.updateUserManager(userManager);
-            response.setStatus(1);
-            response.setMessage("Update Success");
-            response.setData(user);
-        }else {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            Optional<UserManager> checkId = userManagerRepository.findById(managerId);
+            UserManager checkUserManager = userManagerRepository.findByUserName(userManager.getUserName());
+            if(checkId.isPresent() && checkUserManager != null) {
+                userManager.setPassWord(encoderUtil.passwordEncoder().encode(userManager.getPassWord()));
+                UserManager user = userManagerService.updateUserManager(userManager);
+                response.setStatus(1);
+                response.setMessage("Update Success");
+                response.setData(user);
+            }else {
+                response.setStatus(0);
+                response.setMessage("Can't Update");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("Can't Update");
+            response.setMessage("No UserManager");
         }
         return response;
     }
@@ -91,6 +97,9 @@ public class UserManagerController {
                 response.setStatus(0);
                 response.setMessage("No Data");
             }
+        }else {
+            response.setStatus(0);
+            response.setMessage("No UserManager");
         }
         return response;
     }

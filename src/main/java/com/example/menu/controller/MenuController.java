@@ -44,14 +44,20 @@ public class MenuController {
     @PostMapping("/updateMenu/{menuId}")
     public Object updateMenu(@PathVariable int menuId, Menu menu){
         APIResponse response = new APIResponse();
-        Optional<Menu> checkMenuId = menuRepository.findById(menuId);
-        if (checkMenuId.isPresent()) {
-            menuService.update(menu);
-            response.setStatus(1);
-            response.setMessage("Success");
-        }else {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            Optional<Menu> checkMenuId = menuRepository.findById(menuId);
+            if (checkMenuId.isPresent()) {
+                menuService.update(menu);
+                response.setStatus(1);
+                response.setMessage("Success");
+            }else {
+                response.setStatus(0);
+                response.setMessage("Can't Success");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("Can't Success");
+            response.setMessage("No UserManager");
         }
         return response;
     }
@@ -59,14 +65,20 @@ public class MenuController {
     @PostMapping("/deleteMenu/{menuId}")
     public Object deleteMenu(@PathVariable int menuId) {
         APIResponse response = new APIResponse();
-        Optional<Menu> checkId = menuRepository.findById(menuId);
-        if (checkId.isPresent()) {
-            menuService.delete(menuId);
-            response.setStatus(1);
-            response.setMessage("Delete Success");
-        }else {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            Optional<Menu> checkId = menuRepository.findById(menuId);
+            if (checkId.isPresent()) {
+                menuService.delete(menuId);
+                response.setStatus(1);
+                response.setMessage("Delete Menu Success");
+            }else {
+                response.setStatus(0);
+                response.setMessage("Not Success");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("Not Success");
+            response.setMessage("No UserManager");
         }
         return response;
     }

@@ -4,8 +4,10 @@ import com.example.menu.entities.ImageFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public interface ImageFileRepository extends JpaRepository<ImageFile,Integer> {
 
     Optional<ImageFile> findByManagerIdAndTypeMenuAndMenuId(int managerId, String typeMenu, int menuId);
+    Optional<ImageFile> findByMenuId(int menuId);
 }

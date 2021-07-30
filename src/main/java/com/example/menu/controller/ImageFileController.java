@@ -29,24 +29,24 @@ public class ImageFileController {
     @PostMapping("/save")
     public Object insertImage(@RequestParam("fileIMG") MultipartFile multipartFile, ImageFile fileImageSave) {
         APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            String img = imageFileService.insertImage(multipartFile, fileImageSave, optUserManager.get().getManagerId());
+            String img = imageFileService.insertImageFile(multipartFile, fileImageSave, optUserManager.get().getManagerId());
             response.setStatus(1);
             response.setMessage("save Image Success");
             response.setData(img);
         }else {
             response.setStatus(0);
-            response.setMessage("Not Data");
+            response.setMessage("No UserManager");
         }
         return response;
     }
 
-    @GetMapping(value = "/list/{menuId}/{typeMenu}")
+    @GetMapping("/list/{menuId}/{typeMenu}")
     public Object getImage(@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
         APIResponse response = new APIResponse();
         //List<String> imgList = new ArrayList<>();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
             Optional<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
             /*for(ImageFile name : checkManagerIdAndTypeMenu){
@@ -61,7 +61,43 @@ public class ImageFileController {
             response.setData(imgFile);
         }else{
             response.setStatus(0);
-            response.setMessage("Not Data");
+            response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    @PostMapping("/delete/{menuId}")
+    public Object deleteImage(@PathVariable int menuId) {
+        APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if(optUserManager.isPresent()){
+            Optional<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
+            if(optImageFile.isPresent()){
+                imageFileService.deleteImageFile(optImageFile.get().getImageId(),optImageFile.get().getNameImage());
+                response.setStatus(1);
+                response.setMessage("Delete Image Success");
+            }else{
+                response.setData(0);
+                response.setMessage("No Image");
+            }
+        }else {
+            response.setStatus(0);
+            response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    @PostMapping("/update/{menuId}")
+    public Object updateImage(@RequestParam("fileIMG") MultipartFile multipartFile,@PathVariable int menuId,ImageFile imageFile) {
+        APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            imageFileService.updateImageFile(multipartFile, imageFile, menuId);
+            response.setStatus(1);
+            response.setMessage("Update Image Success");
+        }else{
+            response.setStatus(0);
+            response.setMessage("No UserManager");
         }
         return response;
     }
