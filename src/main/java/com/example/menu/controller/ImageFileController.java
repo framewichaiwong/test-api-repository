@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -45,20 +47,17 @@ public class ImageFileController {
     @GetMapping("/list/{menuId}/{typeMenu}")
     public Object getImage(@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
         APIResponse response = new APIResponse();
-        //List<String> imgList = new ArrayList<>();
+        List<byte[]> imgList = new ArrayList<>();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
-            Optional<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            /*for(ImageFile name : checkManagerIdAndTypeMenu){
-                byte[] imgFile = imageFileService.getImageFile(name.getNameImage());
-                String imgEncode = Base64.getEncoder().encodeToString(imgFile);
-                imgList.add(imgEncode);
-            }*/
-            byte[] imgFile = imageFileService.getImageFile(checkManagerIdAndTypeMenu.get().getNameImage());
-            //String imgEncode = Base64.getEncoder().encodeToString(imgFile);
+            List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
+            for(int i=0; i<checkManagerIdAndTypeMenu.size(); i++){
+                byte[] imgFile = imageFileService.getImageFile(checkManagerIdAndTypeMenu.get(i).getNameImage());
+                imgList.add(imgFile);
+            }
             response.setStatus(1);
             response.setMessage("List Image Success");
-            response.setData(imgFile);
+            response.setData(imgList);
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
