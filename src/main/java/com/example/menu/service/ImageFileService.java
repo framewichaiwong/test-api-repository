@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,12 +52,12 @@ public class ImageFileService {
     }
 
     public boolean deleteImageFile(int imageId, String nameImage) {
-        String newPath = path + "/" + nameImage;
-        Path fileToDeletePath = Paths.get(newPath);
-        System.out.print("file ===>>> " + fileToDeletePath);
         try {
-            Files.delete(fileToDeletePath);
+            String newPath = path + "/" + nameImage;
+            Path fileToDeletePath = Paths.get(newPath);
+            Files.deleteIfExists(fileToDeletePath);
             imageFileRepository.deleteById(imageId);
+            System.out.print("file ===>>> Delete Success...!!!");
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,30 +66,23 @@ public class ImageFileService {
     }
 
     public void updateImageFile(MultipartFile multipartFile, ImageFile imageFile, int menuId) {
-        Optional<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
-        ImageFile oldSaveImageFile = optImageFile.get();  /// Set for old_data.
-
-        if(multipartFile != null && !multipartFile.isEmpty()){
-            /// Delete Data_Image in Database.
+        List<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
+        for (ImageFile file : optImageFile) {
             try {
-                boolean deleteImg = deleteImageFile(optImageFile.get().getImageId(),optImageFile.get().getNameImage());
-                if (deleteImg){
-                    var insertImg = insertImageFile(multipartFile, imageFile, oldSaveImageFile.getManagerId());
-                    if(insertImg != null){
+                //ImageFile oldSaveImageFile = file;  /// Set for old_data.
+                /// Delete Data_Image in Database.
+                boolean deleteImg = deleteImageFile(file.getImageId(), file.getNameImage());
+                if (deleteImg) {
+                    /// Create Data_Image in Database.
+                    var insertImg = insertImageFile(multipartFile, imageFile, file.getManagerId()/*oldSaveImageFile.getManagerId()*/);
+                    if (insertImg != null) {
                         System.out.print("----- Delete IMG & Create IMG Success.... -----");
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("----------Error----------");
             }
-        }else{
-            imageFile.setNameImage(oldSaveImageFile.getNameImage());
-            imageFile.setManagerId(oldSaveImageFile.getManagerId());
-            imageFile.setMenuId(oldSaveImageFile.getMenuId());
-            imageFile.setTypeMenu(imageFile.getTypeMenu());
-            imageFileRepository.save(oldSaveImageFile);
-            System.out.print("----- Save old ImageFile -----");
         }
     }
 

@@ -10,5 +10,5 @@ import java.util.OptionalInt;
 public interface ImageFileRepository extends JpaRepository<ImageFile,Integer> {
 
     List<ImageFile> findByManagerIdAndTypeMenuAndMenuId(int managerId, String typeMenu, int menuId);
-    Optional<ImageFile> findByMenuId(int menuId);
+    List<ImageFile> findByMenuId(int menuId);
 }

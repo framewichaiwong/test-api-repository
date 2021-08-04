@@ -51,8 +51,8 @@ public class ImageFileController {
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
             List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            for(int i=0; i<checkManagerIdAndTypeMenu.size(); i++){
-                byte[] imgFile = imageFileService.getImageFile(checkManagerIdAndTypeMenu.get(i).getNameImage());
+            for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+                byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
                 imgList.add(imgFile);
             }
             response.setStatus(1);
@@ -70,16 +70,22 @@ public class ImageFileController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            Optional<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
-            if(optImageFile.isPresent()){
-                imageFileService.deleteImageFile(optImageFile.get().getImageId(),optImageFile.get().getNameImage());
-                response.setStatus(1);
-                response.setMessage("Delete Image Success");
-            }else{
-                response.setData(0);
-                response.setMessage("No Image");
+            List<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
+            for (ImageFile imageFile : optImageFile){
+                try {
+                    boolean deleteImg = imageFileService.deleteImageFile(imageFile.getImageId(), imageFile.getNameImage());
+                    if (deleteImg) {
+                        response.setStatus(1);
+                        response.setMessage("Delete Image Success");
+                    }else {
+                        response.setStatus(0);
+                        response.setMessage("Can't Delete");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }else {
+        }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
         }
