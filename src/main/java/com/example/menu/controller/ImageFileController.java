@@ -106,4 +106,20 @@ public class ImageFileController {
         }
         return response;
     }
+
+   // ----------------------------------------------------------------------------------------------------------------------------------------
+   @GetMapping("/list/{managerId}/{menuId}/{typeMenu}")
+   public Object getImageForCustomer(@PathVariable int managerId,@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
+       APIResponse response = new APIResponse();
+       List<byte[]> imgList = new ArrayList<>();
+       List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(managerId, typeMenu,menuId);
+       for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+           byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
+           imgList.add(imgFile);
+       }
+       response.setStatus(1);
+       response.setMessage("List Image Success");
+       response.setData(imgList);
+       return response;
+   }
 }

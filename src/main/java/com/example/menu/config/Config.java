@@ -13,6 +13,7 @@ public class Config {
             "/order/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}",
             "/tableCheckBill/save",
             "/orderCheckBill/save",
+            "/image/list/{managerId}/{menuId}/{typeMenu}",
     };
 
 }

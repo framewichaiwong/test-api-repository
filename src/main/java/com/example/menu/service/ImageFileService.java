@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ImageFileService {
@@ -43,8 +42,8 @@ public class ImageFileService {
     
     public byte[] getImageFile(String nameImage) throws IOException {
         try {
-           InputStream in = new FileInputStream(path + "/" + nameImage);
-            return IOUtils.toByteArray(in);
+           InputStream inImg = new FileInputStream(path + "/" + nameImage);
+            return IOUtils.toByteArray(inImg);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
