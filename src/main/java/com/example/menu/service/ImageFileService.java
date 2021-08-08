@@ -43,7 +43,9 @@ public class ImageFileService {
     public byte[] getImageFile(String nameImage) throws IOException {
         try {
            InputStream inImg = new FileInputStream(path + "/" + nameImage);
-            return IOUtils.toByteArray(inImg);
+            var img = IOUtils.toByteArray(inImg);
+            inImg.close();
+            return img;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -51,20 +53,22 @@ public class ImageFileService {
     }
 
     public boolean deleteImageFile(int imageId, String nameImage) {
+        String newPath = path + "/" + nameImage;
         try {
-            String newPath = path + "/" + nameImage;
-            Path fileToDeletePath = Paths.get(newPath);
-            Files.deleteIfExists(fileToDeletePath);
-            imageFileRepository.deleteById(imageId);
-            System.out.print("file ===>>> Delete Success...!!!");
-            return true;
-        } catch (IOException e) {
+            File deleteFile = new File(newPath);
+            boolean deleteFileFormPath = deleteFile.delete();
+            if (deleteFileFormPath){
+                imageFileRepository.deleteById(imageId);
+                System.out.print("file ===>>> Delete Success...!!!");
+                return true;
+            }
+        }catch (Exception e){
             e.printStackTrace();
         }
         return false;
     }
 
-    public void updateImageFile(MultipartFile multipartFile, ImageFile imageFile, int menuId) {
+    public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, int menuId) {
         List<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
         for (ImageFile file : optImageFile) {
             try {
@@ -83,6 +87,7 @@ public class ImageFileService {
                 System.out.println("----------Error----------");
             }
         }
+        return false;
     }
 
 }

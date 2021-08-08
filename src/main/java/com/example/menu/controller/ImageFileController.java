@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/image")
@@ -45,8 +43,8 @@ public class ImageFileController {
     }
 
     @GetMapping("/list/{menuId}/{typeMenu}")
-    public Object getImage(@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
-        APIResponse response = new APIResponse();
+    public Object getImage(@PathVariable String typeMenu, @PathVariable int menuId) throws IOException {
+        /*APIResponse response = new APIResponse();
         List<byte[]> imgList = new ArrayList<>();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
@@ -54,6 +52,27 @@ public class ImageFileController {
             for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
                 byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
                 imgList.add(imgFile);
+            }
+            response.setStatus(1);
+            response.setMessage("List Image Success");
+            response.setData(imgList);
+        }else{
+            response.setStatus(0);
+            response.setMessage("No UserManager");
+        }
+        return response;*/
+        APIResponse response = new APIResponse();
+        List<Object> imgList = new ArrayList<>();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if (optUserManager.isPresent()) {
+            List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
+            for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+                byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
+                Map<String,Object> ret = new HashMap<>();
+                ret.put("imageId",managerIdAndTypeMenu.getImageId());
+                ret.put("dataImage",imgFile);
+                imgList.add(ret);
+                System.out.print("----- imgList ===>>>" + imgList + "-----");
             }
             response.setStatus(1);
             response.setMessage("List Image Success");
@@ -97,9 +116,14 @@ public class ImageFileController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
-            imageFileService.updateImageFile(multipartFile, imageFile, menuId);
-            response.setStatus(1);
-            response.setMessage("Update Image Success");
+            var updateSuccess = imageFileService.updateImageFile(multipartFile, imageFile, menuId);
+            if(updateSuccess) {
+                response.setStatus(1);
+                response.setMessage("Update Image Success");
+            }else{
+                response.setStatus(0);
+                response.setMessage("Can't update");
+            }
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
