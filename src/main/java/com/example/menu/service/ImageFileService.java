@@ -55,9 +55,9 @@ public class ImageFileService {
     public boolean deleteImageFile(int imageId, String nameImage) {
         String newPath = path + "/" + nameImage;
         try {
-            File deleteFile = new File(newPath);
-            boolean deleteFileFormPath = deleteFile.delete();
-            if (deleteFileFormPath){
+            File deleteFileFormPath = new File(newPath);
+            boolean deleteFile = deleteFileFormPath.delete();
+            if (deleteFile){
                 imageFileRepository.deleteById(imageId);
                 System.out.print("file ===>>> Delete Success...!!!");
                 return true;
@@ -68,24 +68,31 @@ public class ImageFileService {
         return false;
     }
 
-    public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, int menuId) {
-        List<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
-        for (ImageFile file : optImageFile) {
-            try {
-                //ImageFile oldSaveImageFile = file;  /// Set for old_data.
-                /// Delete Data_Image in Database.
-                boolean deleteImg = deleteImageFile(file.getImageId(), file.getNameImage());
-                if (deleteImg) {
-                    /// Create Data_Image in Database.
-                    var insertImg = insertImageFile(multipartFile, imageFile, file.getManagerId()/*oldSaveImageFile.getManagerId()*/);
-                    if (insertImg != null) {
-                        System.out.print("----- Delete IMG & Create IMG Success.... -----");
-                    }
+    public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, String nameImage) {
+        String newPath = path + "/" + nameImage;
+        try {
+            File deleteFileFromPath = new File(newPath);
+            boolean deleteFile = deleteFileFromPath.delete();
+            if(deleteFile){
+                System.out.print("----- Delete Image from Folder -----");
+                String idImage = new BigInteger(130,new SecureRandom()).toString();
+                String nameImg = idImage + ".png";
+                String namePath = path + "/" + nameImg;
+                File file = new File(namePath);
+                try {
+                    multipartFile.transferTo(file);
+                    System.out.print("---------- Create & Save Image Success ----------");
+                }catch (IOException e){
+                    e.printStackTrace();
+                    System.out.print("---------- Error 2 ----------");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("----------Error----------");
+                imageFile.setNameImage(nameImg);
+                imageFileRepository.save(imageFile);
+                return true;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("---------- Error 1 ----------");
         }
         return false;
     }

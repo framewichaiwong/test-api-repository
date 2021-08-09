@@ -44,23 +44,6 @@ public class ImageFileController {
 
     @GetMapping("/list/{menuId}/{typeMenu}")
     public Object getImage(@PathVariable String typeMenu, @PathVariable int menuId) throws IOException {
-        /*APIResponse response = new APIResponse();
-        List<byte[]> imgList = new ArrayList<>();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if (optUserManager.isPresent()) {
-            List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
-                byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
-                imgList.add(imgFile);
-            }
-            response.setStatus(1);
-            response.setMessage("List Image Success");
-            response.setData(imgList);
-        }else{
-            response.setStatus(0);
-            response.setMessage("No UserManager");
-        }
-        return response;*/
         APIResponse response = new APIResponse();
         List<Object> imgList = new ArrayList<>();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
@@ -111,18 +94,25 @@ public class ImageFileController {
         return response;
     }
 
-    @PostMapping("/update/{menuId}")
-    public Object updateImage(@RequestParam("fileIMG") MultipartFile multipartFile,@PathVariable int menuId,ImageFile imageFile) {
+    @PostMapping("/update/{imageId}")
+    public Object updateImage(@RequestParam("fileIMG") MultipartFile multipartFile,@PathVariable int imageId,ImageFile imageFile) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
-            var updateSuccess = imageFileService.updateImageFile(multipartFile, imageFile, menuId);
-            if(updateSuccess) {
-                response.setStatus(1);
-                response.setMessage("Update Image Success");
+            Optional<ImageFile> checkImageId = imageFileRepository.findById(imageId);
+            if(checkImageId.isPresent()){
+                var updateSuccess = imageFileService.updateImageFile(multipartFile, imageFile, checkImageId.get().getNameImage());
+                if(updateSuccess) {
+                    response.setStatus(1);
+                    response.setMessage("Update Image Success");
+                }else{
+                    response.setStatus(0);
+                    response.setMessage("Can't update");
+                }
             }else{
+                /// อาจจะได้ทำเพื่อ insert_Image
                 response.setStatus(0);
-                response.setMessage("Can't update");
+                response.setMessage("No Image");
             }
         }else{
             response.setStatus(0);
