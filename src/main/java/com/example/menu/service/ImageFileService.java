@@ -68,7 +68,7 @@ public class ImageFileService {
         return false;
     }
 
-    public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, String nameImage) {
+    /*public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, String nameImage) {
         String newPath = path + "/" + nameImage;
         try {
             File deleteFileFromPath = new File(newPath);
@@ -95,6 +95,6 @@ public class ImageFileService {
             System.out.println("---------- Error 1 ----------");
         }
         return false;
-    }
+    }*/
 
 }

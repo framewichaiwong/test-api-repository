@@ -67,8 +67,8 @@ public class ImageFileController {
         return response;
     }
 
-    @PostMapping("/delete/{menuId}")
-    public Object deleteImage(@PathVariable int menuId) {
+    @PostMapping("/delete/{menuId}") /// delete by menuId.
+    public Object deleteImageByMenuId(@PathVariable int menuId) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
@@ -94,7 +94,33 @@ public class ImageFileController {
         return response;
     }
 
-    @PostMapping("/update/{imageId}")
+    @PostMapping("remove/{imageId}")   /// delete by image_id.
+    public Object deleteImageByImageId(@PathVariable int imageId) {
+        APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            Optional<ImageFile> checkImageId = imageFileRepository.findById(imageId);
+            if(checkImageId.isPresent()){
+                boolean deleteSuccess = imageFileService.deleteImageFile(checkImageId.get().getImageId(),checkImageId.get().getNameImage());
+                if(deleteSuccess){
+                    response.setStatus(1);
+                    response.setMessage("Delete Success");
+                }else{
+                    response.setStatus(0);
+                    response.setMessage("Can't Delete");
+                }
+            }else{
+                response.setStatus(0);
+                response.setMessage("No Image");
+            }
+        }else{
+            response.setStatus(0);
+            response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    /*@PostMapping("/update/{imageId}")
     public Object updateImage(@RequestParam("fileIMG") MultipartFile multipartFile,@PathVariable int imageId,ImageFile imageFile) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
@@ -119,7 +145,7 @@ public class ImageFileController {
             response.setMessage("No UserManager");
         }
         return response;
-    }
+    }*/
 
    // ----------------------------------------------------------------------------------------------------------------------------------------
    @GetMapping("/list/{managerId}/{menuId}/{typeMenu}")
