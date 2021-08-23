@@ -4,6 +4,7 @@ import com.example.menu.entities.ImageFile;
 import com.example.menu.repository.ImageFileRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,9 @@ import java.security.SecureRandom;
 @Service
 public class ImageFileService {
 
-    public static final String path = "C:\\uploadsImage";
+    //public static final String path = "C:\\uploadsImage";
+    @Value("${app.image_path}")
+    String configPath;
 
     @Autowired
     private ImageFileRepository imageFileRepository;
@@ -22,7 +25,7 @@ public class ImageFileService {
     public String insertImageFile(MultipartFile multipartFile, ImageFile imageFile, int managerId){
         String idImage = new BigInteger(130, new SecureRandom()).toString();
         String nameImage = idImage + ".png";
-        String newPath = path + "/" + nameImage;
+        String newPath = configPath + "/" + nameImage;
         File file = new File(newPath);
         try {
             multipartFile.transferTo(file);
