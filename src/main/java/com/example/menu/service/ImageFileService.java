@@ -41,7 +41,7 @@ public class ImageFileService {
     
     public byte[] getImageFile(String nameImage) throws IOException {
         try {
-           InputStream inImg = new FileInputStream(path + "/" + nameImage);
+           InputStream inImg = new FileInputStream(configPath + "/" + nameImage);
             var img = IOUtils.toByteArray(inImg);
             inImg.close();
             return img;
@@ -52,7 +52,7 @@ public class ImageFileService {
     }
 
     public boolean deleteImageFile(int imageId, String nameImage) {
-        String newPath = path + "/" + nameImage;
+        String newPath = configPath + "/" + nameImage;
         try {
             File deleteFileFormPath = new File(newPath);
             boolean deleteFile = deleteFileFormPath.delete();
