@@ -3,6 +3,7 @@ package com.example.menu.service;
 import com.example.menu.entities.Menu;
 import com.example.menu.repository.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,17 +25,18 @@ public class MenuService {
         menuRepository.save(menu);
     }
 
+    // Test update status
+    /*public void updateStatusSale(int menuId, Menu menu) {
+        menuRepository.setStatusSaleForMenu(menuId, menu.getStatusSale());
+    }*/
+
     public void delete(int menuId) {
         menuRepository.deleteById(menuId);
     }
 
-    public List<Menu> getAllMenu() {
+    /*public List<Menu> getAllMenu() {
         return menuRepository.findAll();
-    }
-
-    public List<Menu> listByManagerId(int managerId) {
-        return menuRepository.findByManagerId(managerId);
-    }
+    }*/
 
     public List<Menu> listByManagerIdAndTypeMenu(int managerId,String typeMenu) {
         return menuRepository.findByManagerIdAndTypeMenu(managerId,typeMenu);

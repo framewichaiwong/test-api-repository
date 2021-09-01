@@ -1,11 +1,13 @@
 package com.example.menu.entities;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Data
 @ToString
+@DynamicUpdate
 @Entity(name = "menu")
 public class Menu {
 
@@ -13,11 +15,6 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
     private int menuId;
-
-    /*@Lob
-    @Basic(fetch = FetchType.LAZY) //ดึงทันที
-    @Column(name = "picture")
-    private String picture;*/
 
     @Column(name = "name")
     private String name;
