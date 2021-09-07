@@ -14,6 +14,7 @@ public class Config {
             "/tableCheckBill/save",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
+            "/test/index"
     };
 
 }
