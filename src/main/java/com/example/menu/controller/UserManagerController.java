@@ -67,11 +67,19 @@ public class UserManagerController {
             Optional<UserManager> checkId = userManagerRepository.findById(managerId);
             UserManager checkUserManager = userManagerRepository.findByUserName(userManager.getUserName());
             if(checkId.isPresent() && checkUserManager != null) {
-                userManager.setPassWord(encoderUtil.passwordEncoder().encode(userManager.getPassWord()));
-                UserManager user = userManagerService.updateUserManager(userManager);
-                response.setStatus(1);
-                response.setMessage("Update Success");
-                response.setData(user);
+                if(userManager.getPassWord().isEmpty()){
+                    userManager.setPassWord(checkUserManager.getPassWord());
+                    UserManager user = userManagerService.updateUserManager(userManager);
+                    response.setStatus(1);
+                    response.setMessage("Update Success by Old Password");
+                    response.setData(user);
+                }else{
+                    userManager.setPassWord(encoderUtil.passwordEncoder().encode(userManager.getPassWord()));
+                    UserManager user = userManagerService.updateUserManager(userManager);
+                    response.setStatus(1);
+                    response.setMessage("Update Success by New Password");
+                    response.setData(user);
+                }
             }else {
                 response.setStatus(0);
                 response.setMessage("Can't Update");

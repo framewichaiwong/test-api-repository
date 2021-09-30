@@ -12,6 +12,7 @@ public class TestController {
   @GetMapping("/index")
   public Object index(){
     APIResponse res = new APIResponse();
+    res.setMessage("Hello World");
     return res;
   }
 
