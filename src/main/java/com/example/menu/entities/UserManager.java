@@ -32,8 +32,8 @@ public class UserManager {
     @Column(name = "name_restaurant")
     private String nameRestaurant;
 
-    @Column(name = "number_table")
-    private String numberTable;
+    @Column(name = "number_table_total")
+    private String numberTableTotal;
 
     @Column(name = "address")
     private String address;
