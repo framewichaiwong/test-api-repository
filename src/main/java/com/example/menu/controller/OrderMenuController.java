@@ -2,8 +2,10 @@ package com.example.menu.controller;
 
 import com.example.menu.api.APIResponse;
 import com.example.menu.entities.OrderMenu;
+import com.example.menu.entities.UserManager;
 import com.example.menu.repository.OrderMenuRepository;
 import com.example.menu.service.OrderMenuService;;
+import com.example.menu.util.ContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +22,27 @@ public class OrderMenuController {
     @Autowired
     private OrderMenuService orderMenuService;
 
+    @Autowired
+    private ContextUtil contextUtil;
+
     @PostMapping("/updateOrder/{orderId}")
     public Object updateOrder(@PathVariable int orderId,OrderMenu orderMenu) {
         APIResponse response = new APIResponse();
-        Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
-        if(checkId.isPresent()) {
-            OrderMenu order = orderMenuService.updateOrder(orderMenu);
-            response.setStatus(1);
-            response.setMessage("update success");
-            response.setData(order);
-        }else {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if(optUserManager.isPresent()){
+            Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
+            if(checkId.isPresent()) {
+                OrderMenu order = orderMenuService.updateOrder(orderMenu);
+                response.setStatus(1);
+                response.setMessage("update success");
+                response.setData(order);
+            }else {
+                response.setStatus(0);
+                response.setMessage("can't update");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("can't update");
+            response.setMessage("No UserManager");
         }
         return  response;
     }
@@ -39,29 +50,41 @@ public class OrderMenuController {
     @PostMapping("/deleteOrder/{orderId}")
     public Object deleteOrder(@PathVariable int orderId) {
         APIResponse response = new APIResponse();
-        Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
-        if(checkId.isPresent()) {
-            orderMenuService.deleteOrder(orderId);
-            response.setStatus(1);
-            response.setMessage("Delete Success");
-        }else {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if(optUserManager.isPresent()){
+            Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
+            if(checkId.isPresent()) {
+                orderMenuService.deleteOrder(orderId);
+                response.setStatus(1);
+                response.setMessage("Delete Success");
+            }else {
+                response.setStatus(0);
+                response.setMessage("Not Success");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("Not Success");
+            response.setMessage("No UserManager");
         }
         return response;
     }
 
-    @PostMapping("/deleteManagerIdNumberTable/{managerId}/{numberTable}")
-    public Object deleteManagerIdNumberTable(@PathVariable int managerId, @PathVariable int numberTable) {
+    @PostMapping("/deleteManagerIdNumberTable/{numberTable}")
+    public Object deleteManagerIdNumberTable(@PathVariable int numberTable) {
         APIResponse response = new APIResponse();
-        List<OrderMenu> checkNumberTable = orderMenuRepository.findByManagerIdAndNumberTable(managerId,numberTable);
-        if(checkNumberTable.isEmpty()){
-            response.setStatus(0);
-            response.setMessage("can't delete");
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if(optUserManager.isPresent()){
+            List<OrderMenu> checkNumberTable = orderMenuRepository.findByManagerIdAndNumberTable(optUserManager.get().getManagerId(),numberTable);
+            if(checkNumberTable.isEmpty()){
+                response.setStatus(0);
+                response.setMessage("can't delete");
+            }else{
+                orderMenuService.deleteManagerIdNumberTable(checkNumberTable);
+                response.setStatus(1);
+                response.setMessage("delete success");
+            }
         }else{
-            orderMenuService.deleteManagerIdNumberTable(checkNumberTable);
-            response.setStatus(1);
-            response.setMessage("delete success");
+            response.setStatus(0);
+            response.setMessage("No UserManager");
         }
         return response;
     }
@@ -70,8 +93,15 @@ public class OrderMenuController {
     @GetMapping("/getOrder")
     public Object getOrder() {
         APIResponse response = new APIResponse();
-        List<OrderMenu> listOrder = orderMenuService.getOrder();
-        response.setData(listOrder);
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+        if(optUserManager.isPresent()){
+            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManager.get().getManagerId());
+            response.setStatus(1);
+            response.setData(listOrder);
+        }else {
+            response.setStatus(0);
+            response.setMessage("No UserManager");
+        }
         return response;
     }
 

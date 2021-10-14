@@ -23,7 +23,7 @@ public class TableCheckBillService {
         tableCheckBillRepository.deleteById(tableCheckBillId);
     }
 
-    public List<TableCheckBill> listTableCheckBill() {
-        return tableCheckBillRepository.findAll();
+    public List<TableCheckBill> listTableCheckBill(int managerId) {
+        return tableCheckBillRepository.findByManagerId(managerId);
     }
 }

@@ -8,4 +8,5 @@ import java.util.List;
 public interface OrderMenuRepository extends JpaRepository<OrderMenu,Integer> {
 
     List<OrderMenu> findByManagerIdAndNumberTable(int managerId,int numberTable);
+    List<OrderMenu> findByManagerId(int managerId);
 }

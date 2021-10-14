@@ -35,7 +35,7 @@ public class OrderMenuService {
         return orderMenuRepository.findByManagerIdAndNumberTable(managerId,numberTable);
     }
 
-    public List<OrderMenu> getOrder() {
-        return orderMenuRepository.findAll();
+    public List<OrderMenu> getOrder(int managerId) {
+        return orderMenuRepository.findByManagerId(managerId);
     }
 }
