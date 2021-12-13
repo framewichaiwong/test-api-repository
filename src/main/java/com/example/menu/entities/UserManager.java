@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @ToString
 @Entity(name = "user_manager")
-public class UserManager {
+public class UserManager{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,6 +16,9 @@ public class Menu {
     @Column(name = "menu_id")
     private int menuId;
 
+    @Column(name = "category_menu")
+    private String categoryMenu;
+
     @Column(name = "name")
     private String name;
 
@@ -34,7 +37,7 @@ public class Menu {
     @Column(name = "status_sale")
     private String statusSale;
 
-    //table --> "user_manager"
+    // (FK) table --> "user_manager"
     @Column(name = "manager_id")
     private int managerId;
 

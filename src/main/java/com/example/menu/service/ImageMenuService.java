@@ -1,7 +1,7 @@
 package com.example.menu.service;
 
-import com.example.menu.entities.ImageFile;
-import com.example.menu.repository.ImageFileRepository;
+import com.example.menu.entities.ImageMenu;
+import com.example.menu.repository.ImageMenuRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,16 +13,16 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 @Service
-public class ImageFileService {
+public class ImageMenuService {
 
     //public static final String path = "C:\\uploadsImage";
     @Value("${app.image_path}")
     String configPath;
 
     @Autowired
-    private ImageFileRepository imageFileRepository;
+    private ImageMenuRepository imageMenuRepository;
 
-    public String insertImageFile(MultipartFile multipartFile, ImageFile imageFile, int managerId){
+    public String insertImageMenu(MultipartFile multipartFile, ImageMenu imageMenu, int managerId){
         String idImage = new BigInteger(130, new SecureRandom()).toString();
         String nameImage = idImage + ".png";
         String newPath = configPath + "/" + nameImage;
@@ -32,10 +32,10 @@ public class ImageFileService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        imageFile.setNameImage(nameImage);
-        imageFile.setManagerId(managerId);
-        imageFile.setTypeMenu(imageFile.getTypeMenu());
-        imageFileRepository.save(imageFile);
+        imageMenu.setNameImage(nameImage);
+        imageMenu.setManagerId(managerId);
+        imageMenu.setTypeMenu(imageMenu.getTypeMenu());
+        imageMenuRepository.save(imageMenu);
         return newPath;
     }
     
@@ -57,8 +57,7 @@ public class ImageFileService {
             File deleteFileFormPath = new File(newPath);
             boolean deleteFile = deleteFileFormPath.delete();
             if (deleteFile){
-                imageFileRepository.deleteById(imageId);
-                System.out.print("file ===>>> Delete Success...!!!");
+                imageMenuRepository.deleteById(imageId);
                 return true;
             }
         }catch (Exception e){

@@ -4,26 +4,28 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Data
 @ToString
-@Entity(name = "image_file")
-public class ImageFile {
+@Data
+@Entity(name = "other_menu")
+public class OtherMenu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
-    private int imageId;
+    @Column(name = "other_menu_id")
+    private int otherMenuId;
 
-    @Column(name = "name_image")
-    private String nameImage;
+    @Column(name = "other_menu_name")
+    private String otherMenuName;
+
+    @Column(name = "other_menu_price")
+    private int otherMenuPrice;
 
     @Column(name = "manager_id")
     private int managerId;
 
-    @Column(name = "menu_id")
-    private int menuId;
-
     @Column(name = "type_menu")
     private String typeMenu;
+
 }

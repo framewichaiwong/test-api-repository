@@ -1,6 +1,7 @@
 package com.example.menu.oauth2;
 
 import com.example.menu.entities.UserManager;
+import com.example.menu.entities.UserManagerMember;
 import com.example.menu.service.UserDetailServiceImpl;
 import com.example.menu.util.EncoderUtil;
 import io.jsonwebtoken.*;
@@ -51,6 +52,15 @@ public class TokenService {
                 .claim("NAME", userManager.getUserName()).signWith(SignatureAlgorithm.HS512, secretKey).setExpiration(validity)
                 .setIssuer("nsc").compact();
     }
+
+    public String createToken2(UserManagerMember userManagerMember) { // TEST
+        LocalDateTime today = LocalDateTime.now(); // Test
+        LocalDateTime sixMonthDay = today.plusMonths(monthValidity); // TEST
+        Date validity = Date.from(sixMonthDay.atZone(ZoneId.systemDefault()).toInstant()); // TEST
+        return Jwts.builder().setSubject(userManagerMember.getMemberName()) // TEST
+                .claim("NAME", userManagerMember.getMemberName()).signWith(SignatureAlgorithm.HS512, secretKey).setExpiration(validity)
+                .setIssuer("nsc").compact();
+    } // TEST
 
     public String getUserId(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();

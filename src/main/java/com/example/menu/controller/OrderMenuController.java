@@ -3,6 +3,7 @@ package com.example.menu.controller;
 import com.example.menu.api.APIResponse;
 import com.example.menu.entities.OrderMenu;
 import com.example.menu.entities.UserManager;
+import com.example.menu.entities.UserManagerMember;
 import com.example.menu.repository.OrderMenuRepository;
 import com.example.menu.service.OrderMenuService;;
 import com.example.menu.util.ContextUtil;
@@ -94,11 +95,16 @@ public class OrderMenuController {
     public Object getOrder() {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user_member data.
+        if (optUserManager.isPresent()) { /// UserManager
             List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManager.get().getManagerId());
             response.setStatus(1);
             response.setData(listOrder);
-        }else {
+        }else if(optUserManagerMember.isPresent()){ /// UserManagerMember
+            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManagerMember.get().getManagerId());
+            response.setStatus(1);
+            response.setData(listOrder);
+        }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
         }

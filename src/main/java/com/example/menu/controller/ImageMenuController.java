@@ -1,10 +1,10 @@
 package com.example.menu.controller;
 
 import com.example.menu.api.APIResponse;
-import com.example.menu.entities.ImageFile;
+import com.example.menu.entities.ImageMenu;
 import com.example.menu.entities.UserManager;
-import com.example.menu.repository.ImageFileRepository;
-import com.example.menu.service.ImageFileService;
+import com.example.menu.repository.ImageMenuRepository;
+import com.example.menu.service.ImageMenuService;
 import com.example.menu.util.ContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,23 +15,23 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/image")
-public class ImageFileController {
+public class ImageMenuController {
 
     @Autowired
-    private ImageFileRepository imageFileRepository;
+    private ImageMenuRepository imageMenuRepository;
 
     @Autowired
-    private ImageFileService imageFileService;
+    private ImageMenuService imageMenuService;
 
     @Autowired
     private ContextUtil contextUtil;
 
     @PostMapping("/save")
-    public Object insertImage(@RequestParam("fileIMG") MultipartFile multipartFile, ImageFile fileImageSave) {
+    public Object insertImage(@RequestParam("fileIMG") MultipartFile multipartFile, ImageMenu imageMenu) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            String img = imageFileService.insertImageFile(multipartFile, fileImageSave, optUserManager.get().getManagerId());
+            String img = imageMenuService.insertImageMenu(multipartFile, imageMenu, optUserManager.get().getManagerId());
             response.setStatus(1);
             response.setMessage("save Image Success");
             response.setData(img);
@@ -48,14 +48,13 @@ public class ImageFileController {
         List<Object> imgList = new ArrayList<>();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
-            List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
-                byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
+            List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
+            for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+                byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
                 Map<String,Object> ret = new HashMap<>();
                 ret.put("imageId",managerIdAndTypeMenu.getImageId());
                 ret.put("dataImage",imgFile);
                 imgList.add(ret);
-                System.out.print("----- imgList ===>>>" + imgList + "-----");
             }
             response.setStatus(1);
             response.setMessage("List Image Success");
@@ -72,10 +71,10 @@ public class ImageFileController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            List<ImageFile> optImageFile = imageFileRepository.findByMenuId(menuId);
-            for (ImageFile imageFile : optImageFile){
+            List<ImageMenu> optImageMenu = imageMenuRepository.findByMenuId(menuId);
+            for (ImageMenu imageMenu : optImageMenu){
                 try {
-                    boolean deleteImg = imageFileService.deleteImageFile(imageFile.getImageId(), imageFile.getNameImage());
+                    boolean deleteImg = imageMenuService.deleteImageFile(imageMenu.getImageId(), imageMenu.getNameImage());
                     if (deleteImg) {
                         response.setStatus(1);
                         response.setMessage("Delete Image Success");
@@ -99,9 +98,9 @@ public class ImageFileController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
-            Optional<ImageFile> checkImageId = imageFileRepository.findById(imageId);
+            Optional<ImageMenu> checkImageId = imageMenuRepository.findById(imageId);
             if(checkImageId.isPresent()){
-                boolean deleteSuccess = imageFileService.deleteImageFile(checkImageId.get().getImageId(),checkImageId.get().getNameImage());
+                boolean deleteSuccess = imageMenuService.deleteImageFile(checkImageId.get().getImageId(),checkImageId.get().getNameImage());
                 if(deleteSuccess){
                     response.setStatus(1);
                     response.setMessage("Delete Success");
@@ -152,9 +151,9 @@ public class ImageFileController {
    public Object getImageForCustomer(@PathVariable int managerId,@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
        APIResponse response = new APIResponse();
        List<byte[]> imgList = new ArrayList<>();
-       List<ImageFile> checkManagerIdAndTypeMenu = imageFileRepository.findByManagerIdAndTypeMenuAndMenuId(managerId, typeMenu,menuId);
-       for (ImageFile managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
-           byte[] imgFile = imageFileService.getImageFile(managerIdAndTypeMenu.getNameImage());
+       List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(managerId, typeMenu,menuId);
+       for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+           byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
            imgList.add(imgFile);
        }
        response.setStatus(1);

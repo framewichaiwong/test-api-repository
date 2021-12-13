@@ -3,6 +3,7 @@ package com.example.menu.controller;
 import com.example.menu.api.APIResponse;
 import com.example.menu.entities.TableCheckBill;
 import com.example.menu.entities.UserManager;
+import com.example.menu.entities.UserManagerMember;
 import com.example.menu.repository.TableCheckBillRepository;
 import com.example.menu.service.TableCheckBillService;
 import com.example.menu.util.ContextUtil;
@@ -51,11 +52,16 @@ public class TableCheckBillController {
     public Object listTableCheckBill() {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user data.
+        if (optUserManager.isPresent()) {
             List<TableCheckBill> listTableCheckBill = tableCheckBillService.listTableCheckBill(optUserManager.get().getManagerId());
             response.setStatus(1);
             response.setData(listTableCheckBill);
-        }else {
+        }else if(optUserManagerMember.isPresent()){
+            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listTableCheckBill(optUserManagerMember.get().getManagerId());
+            response.setStatus(1);
+            response.setData(listTableCheckBill);
+        }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
         }

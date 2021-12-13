@@ -62,27 +62,6 @@ public class MenuController {
         }
         return response;
     }
-    // Test update status
-    /*@PostMapping("updateStatusSale/{menuId}")
-    public Object updateStatusSale(@PathVariable int menuId,Menu menu) {
-        APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
-        if (optUserManager.isPresent()){
-            Optional<Menu> checkMenuId = menuRepository.findById(menuId);
-            if(checkMenuId.isPresent()){
-                menuService.updateStatusSale(menuId,menu);
-                response.setStatus(1);
-                response.setMessage("Success");
-            }else{
-                response.setStatus(0);
-                response.setMessage("Can't Success");
-            }
-        }else{
-            response.setStatus(0);
-            response.setMessage("No UserManager");
-        }
-        return response;
-    }*/
 
     @PostMapping("/deleteMenu/{menuId}")
     public Object deleteMenu(@PathVariable int menuId) {
@@ -104,14 +83,6 @@ public class MenuController {
         }
         return response;
     }
-
-    /*@GetMapping("/getMenu")
-    public Object listMenu() {
-        APIResponse response = new APIResponse();
-        List<Menu> getMenu = menuService.getAllMenu();
-        response.setData(getMenu);
-        return response;
-    }*/
 
     @GetMapping("/getMenu/{typeMenu}")
     public Object listMenuByManagerIdAndTypeMenu(@PathVariable String typeMenu) {

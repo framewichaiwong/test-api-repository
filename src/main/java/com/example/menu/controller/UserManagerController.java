@@ -2,6 +2,7 @@ package com.example.menu.controller;
 
 import com.example.menu.api.APIResponse;
 import com.example.menu.entities.UserManager;
+import com.example.menu.entities.UserManagerMember;
 import com.example.menu.repository.UserManagerRepository;
 import com.example.menu.service.UserManagerService;
 import com.example.menu.util.ContextUtil;

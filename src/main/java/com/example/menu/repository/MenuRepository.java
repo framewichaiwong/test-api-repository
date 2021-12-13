@@ -15,7 +15,4 @@ public interface MenuRepository extends JpaRepository<Menu,Integer> {
     List<Menu> findByManagerIdAndTypeMenu(int managerId,String typeMenu);
     Menu findByNameAndManagerId(String name,int managerId);
 
-    /*@Modifying
-    @Query(value = "UPDATE Menu m SET m.statusSale=:statusSale where m.menuId=:menuId")
-    void setStatusSaleForMenu(int menuId,String statusSale);*/
 }
