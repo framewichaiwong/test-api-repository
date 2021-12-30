@@ -16,7 +16,13 @@ public class Config {
             "/image/list/{managerId}/{menuId}/{typeMenu}",
             "/test/index"
 
-            ,"/userMember/saveUserMember"
+            ,"/userMember/saveUserMember",
+
+            "/categoryMenu/list/{managerId}/{categoryMenuName}",
+            "/otherMenu/list/{otherMenuId}",
+
+            "/orderOtherMenu/save",
+            "/orderOtherMenu/listForCustomer/{orderId}",
     };
 
 }

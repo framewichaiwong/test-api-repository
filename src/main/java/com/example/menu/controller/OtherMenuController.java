@@ -107,4 +107,20 @@ public class OtherMenuController {
         }
         return response;
     }
+
+    //------------------------------------------------------------------------------------------------------------------------------
+    @GetMapping(value = "/list/{otherMenuId}")
+    public Object otherMenuListForCustomer(@PathVariable int otherMenuId){
+        APIResponse response = new APIResponse();
+        Optional<OtherMenu> otherMenu = otherMenuService.otherMenuListByOtherMenuId(otherMenuId);
+        if(otherMenu.isPresent()){
+            response.setStatus(1);
+            response.setMessage("find success");
+            response.setData(otherMenu);
+        }else {
+            response.setStatus(0);
+            response.setMessage("No otherMenu");
+        }
+        return response;
+    }
 }

@@ -31,4 +31,8 @@ public class OtherMenuService {
     public OtherMenu otherMenuUpdate(OtherMenu otherMenu){
         return otherMenuRepository.save(otherMenu);
     }
+
+    public Optional<OtherMenu> otherMenuListByOtherMenuId(int otherMenuId){
+        return otherMenuRepository.findById(otherMenuId);
+    }
 }

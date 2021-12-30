@@ -27,10 +27,6 @@ public class OrderMenu {
     @Column(name = "number_table")
     private int numberTable;
 
-    /*@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_id",referencedColumnName = "menu_id")
-    private Menu menu;*/
-
     @Column(name = "name_menu")
     private String nameMenu;
 

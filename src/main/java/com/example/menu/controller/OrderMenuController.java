@@ -118,9 +118,14 @@ public class OrderMenuController {
     public Object saveOrder(OrderMenu orderMenu) {
         APIResponse response = new APIResponse();
         OrderMenu inputOrder = orderMenuService.saveOrder(orderMenu);
-        response.setStatus(1);
-        response.setMessage("Save Success");
-        response.setData(inputOrder);
+        if(inputOrder != null){
+            response.setStatus(1);
+            response.setMessage("Save Success");
+            response.setData(inputOrder);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Can't Save");
+        }
         return response;
     }
 

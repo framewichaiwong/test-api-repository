@@ -20,4 +20,7 @@ public class CategoryMenu {
 
     @Column(name = "other_menu_id")
     private int otherMenuId;
+
+    @Column(name = "manager_id")
+    private int managerId;
 }

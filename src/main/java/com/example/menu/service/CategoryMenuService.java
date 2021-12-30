@@ -30,4 +30,8 @@ public class CategoryMenuService {
     public CategoryMenu categoryMenuUpdate(CategoryMenu categoryMenu){
         return categoryMenuRepository.save(categoryMenu);
     }
+
+    public List<CategoryMenu> listByManagerIdAndCategoryMenuName(int managerId,String categoryMenuName){
+        return categoryMenuRepository.findByManagerIdAndCategoryMenuName(managerId,categoryMenuName);
+    }
 }

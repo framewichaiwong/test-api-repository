@@ -7,6 +7,7 @@ import com.example.menu.repository.CategoryMenuRepository;
 import com.example.menu.service.CategoryMenuService;
 import com.example.menu.util.ContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class CategoryMenuController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
+            categoryMenu.setManagerId(optUserManager.get().getManagerId()); // Set manager_id;
             CategoryMenu menu = categoryMenuService.categoryMenuSave(categoryMenu);
             response.setStatus(1);
             response.setMessage("Save Success");
@@ -96,6 +98,22 @@ public class CategoryMenuController {
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------
+    @GetMapping(value = "/list/{managerId}/{categoryMenuName}")
+    public Object categoryMenuListForCustomer(@PathVariable int managerId, @PathVariable String categoryMenuName){
+        APIResponse response = new APIResponse();
+        List<CategoryMenu> categoryMenuList = categoryMenuService.listByManagerIdAndCategoryMenuName(managerId,categoryMenuName);
+        if(categoryMenuList.isEmpty()){
+            response.setStatus(0);
+            response.setMessage("No CategoryMenu");
+        }else {
+            response.setStatus(1);
+            response.setMessage("List Success");
+            response.setData(categoryMenuList);
         }
         return response;
     }
