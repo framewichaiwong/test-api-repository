@@ -29,13 +29,24 @@ public class OrderMenuController {
     @PostMapping("/updateOrder/{orderId}")
     public Object updateOrder(@PathVariable int orderId,OrderMenu orderMenu) {
         APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
-            Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
-            if(checkId.isPresent()) {
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user_manager data.
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user_manager_member data.
+        Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
+        if (optUserManager.isPresent()) {
+            if (checkId.isPresent()){
                 OrderMenu order = orderMenuService.updateOrder(orderMenu);
                 response.setStatus(1);
-                response.setMessage("update success");
+                response.setMessage("update success by user_manager");
+                response.setData(order);
+            }else {
+                response.setStatus(0);
+                response.setMessage("can't update");
+            }
+        }else if(optUserManagerMember.isPresent()){
+            if (checkId.isPresent()){
+                OrderMenu order = orderMenuService.updateOrder(orderMenu);
+                response.setStatus(1);
+                response.setMessage("update success by user_manager_member");
                 response.setData(order);
             }else {
                 response.setStatus(0);

@@ -23,6 +23,8 @@ public class Config {
 
             "/orderOtherMenu/save",
             "/orderOtherMenu/listForCustomer/{orderId}",
+
+            "/cancelOrderMenu/list/{orderId}",
     };
 
 }

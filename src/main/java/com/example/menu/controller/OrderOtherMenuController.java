@@ -35,7 +35,7 @@ public class OrderOtherMenuController {
         return response;
     }
 
-    @GetMapping(value = "/listForCustomer/{orderId}")
+    @GetMapping(value = "/listForCustomer/{orderId}") /// Use for Customer and UserManager.
     public Object listForCustomer(@PathVariable int orderId){
         APIResponse response = new APIResponse();
         List<OrderOtherMenu> listOrderOtherMenu = orderOtherMenuService.listForCustomer(orderId);
