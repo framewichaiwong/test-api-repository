@@ -10,8 +10,9 @@ public class Config {
             "/userManager/listUser/{managerId}",
             "/menu/getMenu/{managerId}/{typeMenu}",
             "/order/saveOrder",
-            "/order/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}",
+            "/order/getOrderByManagerIdAndNumberTableAndTableCheckBillId/{managerId}/{numberTable}/{tableCheckBillId}",
             "/tableCheckBill/save",
+            "/tableCheckBill/check",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
             "/test/index"
@@ -25,6 +26,9 @@ public class Config {
             "/orderOtherMenu/listForCustomer/{orderId}",
 
             "/cancelOrderMenu/list/{orderId}",
+
+            "/imageSlipTransfer/save",
+            "/imageSlipTransfer/list/{imageSlipIid}",
     };
 
 }

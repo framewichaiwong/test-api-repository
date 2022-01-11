@@ -2,6 +2,7 @@ package com.example.menu.service;
 
 import com.example.menu.entities.OrderMenu;
 import com.example.menu.repository.OrderMenuRepository;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +24,15 @@ public class OrderMenuService {
         return  orderMenuRepository.save(orderMenu);
     }
 
-    public void deleteOrder(int orderId) {
-        orderMenuRepository.deleteById(orderId);
+    public List<OrderMenu> getOrderByManagerIdAndNumberTableAndTableCheckBillId(int managerId, int numberTable, int tableCheckBillId) {
+        return orderMenuRepository.findByManagerIdAndNumberTableAndTableCheckBillId(managerId,numberTable,tableCheckBillId);
     }
 
-    public void deleteManagerIdNumberTable(List<OrderMenu> lst) {
-        orderMenuRepository.deleteAll(lst);
+    public List<OrderMenu> getOrder(int managerId, int tableCheckBillId) {
+        return orderMenuRepository.findByManagerIdAndTableCheckBillId(managerId,tableCheckBillId);
     }
 
-    public List<OrderMenu> getOrderByManagerIdAndNumberTable(int managerId, int numberTable) {
-        return orderMenuRepository.findByManagerIdAndNumberTable(managerId,numberTable);
-    }
-
-    public List<OrderMenu> getOrder(int managerId) {
-        return orderMenuRepository.findByManagerId(managerId);
+    public void orderUpdateTableCheckBillId(OrderMenu orderMenu) {
+        orderMenuRepository.save(orderMenu);
     }
 }

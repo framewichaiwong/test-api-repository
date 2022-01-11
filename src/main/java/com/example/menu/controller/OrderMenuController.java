@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.RecursiveTask;
 
 @RestController
 @RequestMapping("/order")
@@ -59,65 +60,63 @@ public class OrderMenuController {
         return  response;
     }
 
-    @PostMapping("/deleteOrder/{orderId}")
-    public Object deleteOrder(@PathVariable int orderId) {
-        APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
-            Optional<OrderMenu> checkId = orderMenuRepository.findById(orderId);
-            if(checkId.isPresent()) {
-                orderMenuService.deleteOrder(orderId);
-                response.setStatus(1);
-                response.setMessage("Delete Success");
-            }else {
-                response.setStatus(0);
-                response.setMessage("Not Success");
-            }
-        }else{
-            response.setStatus(0);
-            response.setMessage("No UserManager");
-        }
-        return response;
-    }
-
-    @PostMapping("/deleteManagerIdNumberTable/{numberTable}")
-    public Object deleteManagerIdNumberTable(@PathVariable int numberTable) {
-        APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
-            List<OrderMenu> checkNumberTable = orderMenuRepository.findByManagerIdAndNumberTable(optUserManager.get().getManagerId(),numberTable);
-            if(checkNumberTable.isEmpty()){
-                response.setStatus(0);
-                response.setMessage("can't delete");
-            }else{
-                orderMenuService.deleteManagerIdNumberTable(checkNumberTable);
-                response.setStatus(1);
-                response.setMessage("delete success");
-            }
-        }else{
-            response.setStatus(0);
-            response.setMessage("No UserManager");
-        }
-        return response;
-    }
-
     //Get All
-    @GetMapping("/getOrder")
-    public Object getOrder() {
+    @GetMapping("/getOrder/{tableCheckBillId}")
+    public Object getOrder(@PathVariable int tableCheckBillId) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user_member data.
         if (optUserManager.isPresent()) { /// UserManager
-            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManager.get().getManagerId());
+            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManager.get().getManagerId(),tableCheckBillId);
             response.setStatus(1);
             response.setData(listOrder);
         }else if(optUserManagerMember.isPresent()){ /// UserManagerMember
-            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManagerMember.get().getManagerId());
+            List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManagerMember.get().getManagerId(),tableCheckBillId);
             response.setStatus(1);
             response.setData(listOrder);
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    /// update for change (table_check_bill_id from 0 to table_check_bill_id).
+    @PostMapping(value = "/orderUpdateTableCheckBillId/{managerId}/{numberTable}/{tableCheckBillId}")
+    public Object orderUpdateTableCheckBillId(@PathVariable int managerId,@PathVariable int numberTable,@PathVariable int tableCheckBillId, OrderMenu orderMenu){
+        APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2();
+        List<OrderMenu> listOrderMenu = orderMenuRepository.findByManagerIdAndNumberTableAndTableCheckBillId(managerId, numberTable, tableCheckBillId);
+        if(optUserManager.isPresent()){
+            for(OrderMenu order : listOrderMenu){
+                orderMenu.setOrderId(order.getOrderId());
+                orderMenu.setNumberMenu(order.getNumberMenu());
+                orderMenu.setNumberTable(order.getNumberTable());
+                orderMenu.setNameMenu(order.getNameMenu());
+                orderMenu.setPriceMenu(order.getPriceMenu());
+                orderMenu.setManagerId(order.getManagerId());
+                orderMenu.setMakeStatus(order.getMakeStatus());
+                orderMenuService.orderUpdateTableCheckBillId(orderMenu);
+            }
+            response.setStatus(1);
+            response.setMessage("Update Success by user_manager");
+        }else if(optUserManagerMember.isPresent()){
+            for(OrderMenu order : listOrderMenu){
+                orderMenu.setOrderId(order.getOrderId());
+                orderMenu.setNumberMenu(order.getNumberMenu());
+                orderMenu.setNumberTable(order.getNumberTable());
+                orderMenu.setNameMenu(order.getNameMenu());
+                orderMenu.setPriceMenu(order.getPriceMenu());
+                orderMenu.setManagerId(order.getManagerId());
+                orderMenu.setMakeStatus(order.getMakeStatus());
+                orderMenuService.orderUpdateTableCheckBillId(orderMenu);
+            }
+            response.setStatus(1);
+            response.setMessage("Update Success by user_manager_member");
+        }else{
+            response.setStatus(0);
+            response.setMessage("No userManager");
         }
         return response;
     }
@@ -140,10 +139,10 @@ public class OrderMenuController {
         return response;
     }
 
-    @GetMapping("/getOrderByManagerIdAndNumberTable/{managerId}/{numberTable}")
-    public Object getOrderByManagerIdAndNumberTable(@PathVariable int managerId,@PathVariable int numberTable) {
+    @GetMapping("/getOrderByManagerIdAndNumberTableAndTableCheckBillId/{managerId}/{numberTable}/{tableCheckBillId}")
+    public Object getOrderByManagerIdAndNumberTableAndTableCheckBillId(@PathVariable int managerId,@PathVariable int numberTable,@PathVariable int tableCheckBillId) {
         APIResponse response = new APIResponse();
-        List<OrderMenu> getOrder = orderMenuService.getOrderByManagerIdAndNumberTable(managerId,numberTable);
+        List<OrderMenu> getOrder = orderMenuService.getOrderByManagerIdAndNumberTableAndTableCheckBillId(managerId,numberTable,tableCheckBillId);
         response.setData(getOrder);
         return response;
     }

@@ -27,40 +27,75 @@ public class TableCheckBillController {
     private ContextUtil contextUtil;
 
 
-    @PostMapping("/delete/{tableCheckBillId}")
-    public Object deleteTableCheckBill(@PathVariable int tableCheckBillId) {
+//    @PostMapping("/delete/{tableCheckBillId}")
+//    public Object deleteTableCheckBill(@PathVariable int tableCheckBillId) {
+//        APIResponse response = new APIResponse();
+//        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
+//        if(optUserManager.isPresent()){
+//            Optional<TableCheckBill> checkId = tableCheckBillRepository.findById(tableCheckBillId);
+//            if (checkId.isPresent()){
+//                tableCheckBillService.deleteTableCheckBill(tableCheckBillId);
+//                response.setStatus(1);
+//                response.setMessage("delete success");
+//            }else{
+//                response.setStatus(0);
+//                response.setMessage("can't delete");
+//            }
+//        }else {
+//            response.setStatus(0);
+//            response.setMessage("No UserManager");
+//        }
+//        return response;
+//    }
+
+    @GetMapping("/list/{paymentStatus}")
+    public Object listTableCheckBill(@PathVariable String paymentStatus) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        if(optUserManager.isPresent()){
-            Optional<TableCheckBill> checkId = tableCheckBillRepository.findById(tableCheckBillId);
-            if (checkId.isPresent()){
-                tableCheckBillService.deleteTableCheckBill(tableCheckBillId);
-                response.setStatus(1);
-                response.setMessage("delete success");
-            }else{
-                response.setStatus(0);
-                response.setMessage("can't delete");
-            }
-        }else {
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user data.
+        if (optUserManager.isPresent()) {
+            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManager.get().getManagerId(),paymentStatus);
+            response.setStatus(1);
+            response.setData(listTableCheckBill);
+        }else if(optUserManagerMember.isPresent()){
+            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManagerMember.get().getManagerId(),paymentStatus);
+            response.setStatus(1);
+            response.setData(listTableCheckBill);
+        }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
         }
         return response;
     }
 
-    @GetMapping("/list")
-    public Object listTableCheckBill() {
+    @PostMapping(value = "/update")
+    public Object tableCheckBIllUpdate(TableCheckBill tableCheckBill){
         APIResponse response = new APIResponse();
-        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
-        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user data.
-        if (optUserManager.isPresent()) {
-            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listTableCheckBill(optUserManager.get().getManagerId());
-            response.setStatus(1);
-            response.setData(listTableCheckBill);
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2();
+        Optional<TableCheckBill> checkId = tableCheckBillRepository.findById(tableCheckBill.getTableCheckBillId());
+        if(optUserManager.isPresent()){
+            if(checkId.isPresent()){
+                tableCheckBill.setDate(checkId.get().getDate());
+                tableCheckBill.setTime(checkId.get().getTime());
+                TableCheckBill table = tableCheckBillService.tableCheckBillUpdate(tableCheckBill);
+                response.setStatus(1);
+                response.setMessage("Update Success by user_manager");
+                response.setData(table);
+            }else{
+                response.setStatus(0);
+                response.setMessage("Can't update by user_manager");
+            }
         }else if(optUserManagerMember.isPresent()){
-            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listTableCheckBill(optUserManagerMember.get().getManagerId());
-            response.setStatus(1);
-            response.setData(listTableCheckBill);
+            if(checkId.isPresent()){
+                TableCheckBill table = tableCheckBillService.tableCheckBillUpdate(tableCheckBill);
+                response.setStatus(1);
+                response.setMessage("Update Success by user_manager_member");
+                response.setData(table);
+            }else{
+                response.setStatus(0);
+                response.setMessage("Can't update by user_manager_member");
+            }
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
@@ -71,10 +106,10 @@ public class TableCheckBillController {
     //----------------------------------------------------------------------------------------------------------------
     // Set of customer
 
-    @PostMapping("/save")
-    public Object saveNumberTable(@RequestParam int managerId, @RequestParam int numberTable, TableCheckBill tableCheckBill) {
+    @PostMapping(value = "/save")
+    public Object saveNumberTable(TableCheckBill tableCheckBill) {
         APIResponse response = new APIResponse();
-        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTable(managerId,numberTable);
+        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTableAndPaymentStatus(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(),tableCheckBill.getPaymentStatus());
         if(checkDb==null){
             TableCheckBill saveTableCheckBill = tableCheckBillService.saveNumberTable(tableCheckBill);
             response.setStatus(1);
@@ -83,6 +118,20 @@ public class TableCheckBillController {
         }else{
             response.setStatus(0);
             response.setMessage("can't save");
+        }
+        return response;
+    }
+
+    @PostMapping("/check/{paymentStatus}") /// For Customer(เช็กว่ามีข้อมูลหรือไม่).
+    public Object checkNumberTable(@PathVariable String paymentStatus, TableCheckBill tableCheckBill) {
+        APIResponse response = new APIResponse();
+        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTableAndPaymentStatus(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(), paymentStatus);
+        if(checkDb != null){
+            response.setStatus(1);
+            response.setMessage("Have Data");
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not Have Data");
         }
         return response;
     }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,11 +21,15 @@ public class TableCheckBillService {
         return tableCheckBillRepository.save(tableCheckBill);
     }
 
-    public void deleteTableCheckBill(int tableCheckBillId) {
-        tableCheckBillRepository.deleteById(tableCheckBillId);
+//    public void deleteTableCheckBill(int tableCheckBillId) {
+//        tableCheckBillRepository.deleteById(tableCheckBillId);
+//    }
+
+    public List<TableCheckBill> listByManagerIdAndPaymentStatus(int managerId,String paymentStatus) {
+        return tableCheckBillRepository.findByManagerIdAndPaymentStatus(managerId,paymentStatus);
     }
 
-    public List<TableCheckBill> listTableCheckBill(int managerId) {
-        return tableCheckBillRepository.findByManagerId(managerId);
+    public TableCheckBill tableCheckBillUpdate(TableCheckBill tableCheckBill) {
+        return tableCheckBillRepository.save(tableCheckBill);
     }
 }

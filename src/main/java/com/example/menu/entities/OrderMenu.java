@@ -39,6 +39,9 @@ public class OrderMenu {
     @Column(name = "make_status")
     private String makeStatus;
 
+    @Column(name = "table_check_bill_id")
+    private int tableCheckBillId;
+
     /// Column of dateTime,date,time save by form same. But will get data by pattern of @JsonFormat().
     // Time and Date
     /*@Column(name = "date_time")
