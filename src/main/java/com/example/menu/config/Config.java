@@ -12,7 +12,7 @@ public class Config {
             "/order/saveOrder",
             "/order/getOrderByManagerIdAndNumberTableAndTableCheckBillId/{managerId}/{numberTable}/{tableCheckBillId}",
             "/tableCheckBill/save",
-            "/tableCheckBill/check",
+            "/tableCheckBill/check/{paymentStatus}",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
             "/test/index"
