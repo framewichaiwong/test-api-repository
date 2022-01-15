@@ -69,10 +69,12 @@ public class OrderMenuController {
         if (optUserManager.isPresent()) { /// UserManager
             List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManager.get().getManagerId(),tableCheckBillId);
             response.setStatus(1);
+            response.setMessage("List by user_manager");
             response.setData(listOrder);
         }else if(optUserManagerMember.isPresent()){ /// UserManagerMember
             List<OrderMenu> listOrder = orderMenuService.getOrder(optUserManagerMember.get().getManagerId(),tableCheckBillId);
             response.setStatus(1);
+            response.setMessage("List by user_manager_member");
             response.setData(listOrder);
         }else{
             response.setStatus(0);

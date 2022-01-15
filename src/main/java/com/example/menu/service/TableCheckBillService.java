@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -31,5 +33,9 @@ public class TableCheckBillService {
 
     public TableCheckBill tableCheckBillUpdate(TableCheckBill tableCheckBill) {
         return tableCheckBillRepository.save(tableCheckBill);
+    }
+
+    public List<TableCheckBill> listByYearMonthDayAndManagerId(LocalDate firstDate, LocalDate lastDate, int managerId,String paymentStatus){
+        return tableCheckBillRepository.findByDateBetweenAndManagerId(firstDate,lastDate,managerId,paymentStatus);
     }
 }

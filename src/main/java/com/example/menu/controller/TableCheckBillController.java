@@ -8,8 +8,11 @@ import com.example.menu.repository.TableCheckBillRepository;
 import com.example.menu.service.TableCheckBillService;
 import com.example.menu.util.ContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +72,7 @@ public class TableCheckBillController {
     }
 
     @PostMapping(value = "/update")
-    public Object tableCheckBIllUpdate(TableCheckBill tableCheckBill){
+    public Object tableCheckBillUpdate(TableCheckBill tableCheckBill){
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2();
@@ -99,6 +102,24 @@ public class TableCheckBillController {
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
+        }
+        return response;
+    }
+
+    @GetMapping(value = "/getList/{firstYearMonthDay}/{lastYearMonthDay}/{paymentStatus}")
+    public Object listByYear(@PathVariable String firstYearMonthDay, @PathVariable String lastYearMonthDay,@PathVariable String paymentStatus) {
+        APIResponse response = new APIResponse();
+        LocalDate firstDate = LocalDate.parse(firstYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
+        LocalDate lastDate = LocalDate.parse(lastYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerId(firstDate,lastDate,optUserManager.get().getManagerId(),paymentStatus);
+            response.setStatus(1);
+            response.setMessage("List by user_manager");
+            response.setData(data);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not user");
         }
         return response;
     }
