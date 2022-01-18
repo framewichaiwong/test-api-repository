@@ -34,16 +34,22 @@ public class UserManagerMemberController {
     @PostMapping(value = "/saveUserMember")
     public Object saveUserMember(UserManagerMember userManagerMember) {
         APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         UserManagerMember memberName = userManagerMemberRepository.findByMemberName(userManagerMember.getMemberName());
-        if(memberName == null){
-            userManagerMember.setMemberPassword(encoderUtil.passwordEncoder().encode(userManagerMember.getMemberPassword()));
-            UserManagerMember input = userManagerMemberService.saveMember(userManagerMember);
-            response.setStatus(1);
-            response.setMessage("Save Success");
-            response.setData(input);
-        }else {
+        if(optUserManager.isPresent()){
+            if(memberName == null){
+                userManagerMember.setMemberPassword(encoderUtil.passwordEncoder().encode(userManagerMember.getMemberPassword()));
+                UserManagerMember input = userManagerMemberService.saveMember(userManagerMember);
+                response.setStatus(1);
+                response.setMessage("Save Success by user_manager");
+                response.setData(input);
+            }else {
+                response.setStatus(0);
+                response.setMessage("Can't Save");
+            }
+        }else{
             response.setStatus(0);
-            response.setMessage("not");
+            response.setMessage("No user_manager");
         }
         return response;
     }

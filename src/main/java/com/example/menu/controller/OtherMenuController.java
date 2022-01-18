@@ -30,7 +30,7 @@ public class OtherMenuController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if (optUserManager.isPresent()){
-            OtherMenu checkName = otherMenuRepository.findByOtherMenuName(otherMenu.getOtherMenuName());
+            OtherMenu checkName = otherMenuRepository.findByOtherMenuNameAndManagerId(otherMenu.getOtherMenuName(),optUserManager.get().getManagerId());
             if (checkName == null){
                 otherMenu.setManagerId(optUserManager.get().getManagerId()); /// Set manager_id
                 OtherMenu insert = otherMenuService.otherMenuSave(otherMenu);
