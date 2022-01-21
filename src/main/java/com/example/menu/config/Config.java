@@ -15,9 +15,7 @@ public class Config {
             "/tableCheckBill/check/{paymentStatus}",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
-            "/test/index"
-
-            ,"/userMember/saveUserMember",
+            "/test/index",
 
             "/categoryMenu/list/{managerId}/{categoryMenuName}",
             "/otherMenu/list/{otherMenuId}",
