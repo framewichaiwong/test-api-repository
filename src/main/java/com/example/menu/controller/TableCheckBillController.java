@@ -91,6 +91,8 @@ public class TableCheckBillController {
             }
         }else if(optUserManagerMember.isPresent()){
             if(checkId.isPresent()){
+                tableCheckBill.setDate(checkId.get().getDate());
+                tableCheckBill.setTime(checkId.get().getTime());
                 TableCheckBill table = tableCheckBillService.tableCheckBillUpdate(tableCheckBill);
                 response.setStatus(1);
                 response.setMessage("Update Success by user_manager_member");
