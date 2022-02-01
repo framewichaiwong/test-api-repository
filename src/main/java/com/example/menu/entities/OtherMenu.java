@@ -22,10 +22,15 @@ public class OtherMenu {
     @Column(name = "other_menu_price")
     private int otherMenuPrice;
 
+    @Column(name = "other_selection")
+    private String otherSelection;
+
+    @Column(name = "other_status")
+    private String otherStatus;
+
     @Column(name = "manager_id")
     private int managerId;
 
     @Column(name = "type_menu")
     private String typeMenu;
-
 }
