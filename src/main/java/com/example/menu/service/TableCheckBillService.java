@@ -35,7 +35,7 @@ public class TableCheckBillService {
         return tableCheckBillRepository.save(tableCheckBill);
     }
 
-    public List<TableCheckBill> listByYearMonthDayAndManagerId(LocalDate firstDate, LocalDate lastDate, int managerId,String paymentStatus){
-        return tableCheckBillRepository.findByDateBetweenAndManagerId(firstDate,lastDate,managerId,paymentStatus);
+    public List<TableCheckBill> listByYearMonthDayAndManagerId(LocalDate firstDate, LocalDate lastDate, int managerId,String paymentStatus,String paymentStatusCancel){
+        return tableCheckBillRepository.findByDateBetweenAndManagerId(firstDate,lastDate,managerId,paymentStatus,paymentStatusCancel);
     }
 }

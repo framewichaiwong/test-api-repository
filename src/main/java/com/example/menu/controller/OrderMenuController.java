@@ -126,6 +126,32 @@ public class OrderMenuController {
     //------------------------------------------------------------------------------------------------------------------
     // Set of customer
 
+    /// กรณีที่รายการอาหารของลูกค้าถูกยกเลิกทั้งหมด แล้วใช้ในการปิดบิลได้เลย.
+    /// update for change (table_check_bill_id from 0 to table_check_bill_id).
+    @PostMapping(value = "/orderUpdateTableCheckBillIdByCustomer/{managerId}/{numberTable}/{tableCheckBillId}")
+    public Object orderUpdateTableCheckBillIdByCustomer(@PathVariable int managerId,@PathVariable int numberTable,@PathVariable int tableCheckBillId, OrderMenu orderMenu){
+        APIResponse response = new APIResponse();
+        List<OrderMenu> listOrderMenu = orderMenuRepository.findByManagerIdAndNumberTableAndTableCheckBillId(managerId, numberTable, tableCheckBillId);
+        if(listOrderMenu.isEmpty()){
+            response.setStatus(0);
+            response.setMessage("No have data");
+        }else{
+            for(OrderMenu order : listOrderMenu){
+                orderMenu.setOrderId(order.getOrderId());
+                orderMenu.setNumberMenu(order.getNumberMenu());
+                orderMenu.setNumberTable(order.getNumberTable());
+                orderMenu.setNameMenu(order.getNameMenu());
+                orderMenu.setPriceMenu(order.getPriceMenu());
+                orderMenu.setManagerId(order.getManagerId());
+                orderMenu.setMakeStatus(order.getMakeStatus());
+                orderMenuService.orderUpdateTableCheckBillId(orderMenu);
+            }
+            response.setStatus(1);
+            response.setMessage("Update Success by user_manager");
+        }
+        return response;
+    }
+
     @PostMapping("/saveOrder")
     public Object saveOrder(OrderMenu orderMenu) {
         APIResponse response = new APIResponse();

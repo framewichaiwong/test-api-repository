@@ -108,14 +108,14 @@ public class TableCheckBillController {
         return response;
     }
 
-    @GetMapping(value = "/getList/{firstYearMonthDay}/{lastYearMonthDay}/{paymentStatus}")
-    public Object listByYear(@PathVariable String firstYearMonthDay, @PathVariable String lastYearMonthDay,@PathVariable String paymentStatus) {
+    @GetMapping(value = "/getList/{firstYearMonthDay}/{lastYearMonthDay}/{paymentStatus}/{paymentStatusCancel}")
+    public Object listByYear(@PathVariable String firstYearMonthDay, @PathVariable String lastYearMonthDay,@PathVariable String paymentStatus,@PathVariable String paymentStatusCancel) {
         APIResponse response = new APIResponse();
         LocalDate firstDate = LocalDate.parse(firstYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
         LocalDate lastDate = LocalDate.parse(lastYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
-            List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerId(firstDate,lastDate,optUserManager.get().getManagerId(),paymentStatus);
+            List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerId(firstDate,lastDate,optUserManager.get().getManagerId(),paymentStatus,paymentStatusCancel);
             response.setStatus(1);
             response.setMessage("List by user_manager");
             response.setData(data);
@@ -145,16 +145,35 @@ public class TableCheckBillController {
         return response;
     }
 
-    @PostMapping("/check/{paymentStatus}") /// For Customer(เช็กว่ามีข้อมูลหรือไม่).
-    public Object checkNumberTable(@PathVariable String paymentStatus, TableCheckBill tableCheckBill) {
+    @PostMapping("/check/{paymentStatus}") /// For Customer(เช็กว่า "ยังไม่จ่าย" มีข้อมูลหรือไม่).
+    public Object checkNumberTableNotPay(@PathVariable String paymentStatus, TableCheckBill tableCheckBill) {
         APIResponse response = new APIResponse();
         TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTableAndPaymentStatus(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(), paymentStatus);
         if(checkDb != null){
             response.setStatus(1);
             response.setMessage("Have Data");
+            response.setData(checkDb);
         }else{
             response.setStatus(0);
             response.setMessage("Not Have Data");
+        }
+        return response;
+    }
+
+    @PostMapping(value = "/updateByCustomer")
+    public Object tableCheckBillUpdateByCustomer(TableCheckBill tableCheckBill){
+        APIResponse response = new APIResponse();
+        Optional<TableCheckBill> checkId = tableCheckBillRepository.findById(tableCheckBill.getTableCheckBillId());
+        if(checkId.isPresent()){
+            tableCheckBill.setDate(checkId.get().getDate());
+            tableCheckBill.setTime(checkId.get().getTime());
+            TableCheckBill table = tableCheckBillService.tableCheckBillUpdate(tableCheckBill);
+            response.setStatus(1);
+            response.setMessage("Update Success by customer");
+            response.setData(table);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Can't update by customer");
         }
         return response;
     }

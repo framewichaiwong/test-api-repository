@@ -11,7 +11,9 @@ public class Config {
             "/menu/getMenu/{managerId}/{typeMenu}",
             "/order/saveOrder",
             "/order/getOrderByManagerIdAndNumberTableAndTableCheckBillId/{managerId}/{numberTable}/{tableCheckBillId}",
+            "/order/orderUpdateTableCheckBillIdByCustomer/{managerId}/{numberTable}/{tableCheckBillId}",///
             "/tableCheckBill/save",
+            "/tableCheckBill/updateByCustomer",
             "/tableCheckBill/check/{paymentStatus}",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
@@ -27,6 +29,7 @@ public class Config {
 
             "/imageSlipTransfer/save",
             "/imageSlipTransfer/list/{imageSlipIid}",
+            "/imageSlipTransfer/remove/{imageSlipId}"
     };
 
 }

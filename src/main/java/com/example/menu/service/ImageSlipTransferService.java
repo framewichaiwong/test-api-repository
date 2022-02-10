@@ -46,4 +46,18 @@ public class ImageSlipTransferService {
             return null;
         }
     }
+
+    public boolean imageSlipTransferRemove(int imageSlipId, String imageSlipName) {
+        String newPath = configPath + "/" + imageSlipName;
+        try {
+            File deleteFileFromPath = new File(newPath);
+            if(deleteFileFromPath.delete()){
+                imageSlipTransferRepository.deleteById(imageSlipId);
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

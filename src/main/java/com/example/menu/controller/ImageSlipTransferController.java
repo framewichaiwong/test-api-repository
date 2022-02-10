@@ -44,22 +44,45 @@ public class ImageSlipTransferController {
     @GetMapping(value = "/list/{tableCheckBillId}")
     public Object imageSlipTransferList(@PathVariable int tableCheckBillId) throws IOException {
         APIResponse response = new APIResponse();
-        ImageSlipTransfer imageSlipTransfer = imageSlipTransferRepository.findByTableCheckBillId(tableCheckBillId);
+        List<Object> listImage = new ArrayList<>();
+        List<ImageSlipTransfer> imageSlipTransfer = imageSlipTransferRepository.findByTableCheckBillId(tableCheckBillId);
         if(imageSlipTransfer != null){
-            var img = imageSlipTransferService.imageSlipTransferList(imageSlipTransfer.getImageSlipName());
-            Map<String,Object> ret = new HashMap<>();
-            ret.put("imageSlipId",imageSlipTransfer.getImageSlipId());
-            ret.put("nameTransfer",imageSlipTransfer.getNameTransfer());
-            ret.put("telTransfer",imageSlipTransfer.getTelTransfer());
-            ret.put("tableCheckBillId",imageSlipTransfer.getTableCheckBillId());
-            ret.put("imageSlip",img);
-
+            for(ImageSlipTransfer imgSlip : imageSlipTransfer){
+                var img = imageSlipTransferService.imageSlipTransferList(imgSlip.getImageSlipName());
+                Map<String,Object> ret = new HashMap<>();
+                ret.put("imageSlipId",imgSlip.getImageSlipId());
+                ret.put("nameTransfer",imgSlip.getNameTransfer());
+                ret.put("telTransfer",imgSlip.getTelTransfer());
+                ret.put("tableCheckBillId",imgSlip.getTableCheckBillId());
+                ret.put("imageSlip",img);
+                listImage.add(ret);
+            }
             response.setStatus(1);
             response.setMessage("List Success");
-            response.setData(ret);
+            response.setData(listImage);
         }else {
             response.setStatus(0);
             response.setMessage("No Data image_slip_transfer");
+        }
+        return response;
+    }
+
+    @PostMapping(value = "/remove/{imageSlipId}")
+    public Object imageSlipTransferDelete(@PathVariable int imageSlipId) {
+        APIResponse response = new APIResponse();
+        Optional<ImageSlipTransfer> checkImageSlip = imageSlipTransferRepository.findById(imageSlipId);
+        if(checkImageSlip.isPresent()){
+            boolean check = imageSlipTransferService.imageSlipTransferRemove(imageSlipId,checkImageSlip.get().getImageSlipName());
+            if(check){
+                response.setStatus(1);
+                response.setMessage("Remove Success");
+            }else{
+                response.setStatus(0);
+                response.setMessage("can't remove");
+            }
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not have data");
         }
         return response;
     }
