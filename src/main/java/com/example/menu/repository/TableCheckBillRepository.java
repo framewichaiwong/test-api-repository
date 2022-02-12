@@ -21,4 +21,6 @@ public interface TableCheckBillRepository extends JpaRepository<TableCheckBill,I
 
     @Query(value = "SELECT d FROM table_check_bill d WHERE (d.date BETWEEN :firstDate AND :lastDate) AND d.managerId=:managerId AND (d.paymentStatus=:paymentStatus OR d.paymentStatus=:paymentStatusCancel)")
     List<TableCheckBill> findByDateBetweenAndManagerId(@Param("firstDate") LocalDate firstDate, @Param("lastDate") LocalDate lastDate, @Param("managerId") int managerId,@Param("paymentStatus") String paymentStatus,@Param("paymentStatusCancel") String paymentStatusCancel);
+
+    List<TableCheckBill> findByDateAndManagerIdAndPaymentStatus(LocalDate date,int managerId,String paymentStatus);
 }

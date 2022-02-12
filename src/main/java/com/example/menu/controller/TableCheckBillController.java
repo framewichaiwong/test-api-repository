@@ -109,7 +109,7 @@ public class TableCheckBillController {
     }
 
     @GetMapping(value = "/getList/{firstYearMonthDay}/{lastYearMonthDay}/{paymentStatus}/{paymentStatusCancel}")
-    public Object listByYear(@PathVariable String firstYearMonthDay, @PathVariable String lastYearMonthDay,@PathVariable String paymentStatus,@PathVariable String paymentStatusCancel) {
+    public Object listByYearForSummary(@PathVariable String firstYearMonthDay, @PathVariable String lastYearMonthDay,@PathVariable String paymentStatus,@PathVariable String paymentStatusCancel) {
         APIResponse response = new APIResponse();
         LocalDate firstDate = LocalDate.parse(firstYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
         LocalDate lastDate = LocalDate.parse(lastYearMonthDay/*,DateTimeFormatter.BASIC_ISO_DATE*/);
@@ -118,6 +118,29 @@ public class TableCheckBillController {
             List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerId(firstDate,lastDate,optUserManager.get().getManagerId(),paymentStatus,paymentStatusCancel);
             response.setStatus(1);
             response.setMessage("List by user_manager");
+            response.setData(data);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not user");
+        }
+        return response;
+    }
+
+    @GetMapping(value = "/getList/{dateNow}/{paymentStatus}")  /// สำหรับทดสอบ ตอนนี้
+    public Object listByYearForCheckBill(@PathVariable String dateNow,@PathVariable String paymentStatus) {
+        APIResponse response = new APIResponse();
+        LocalDate date = LocalDate.parse(dateNow/*,DateTimeFormatter.BASIC_ISO_DATE*/);
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2();
+        if(optUserManager.isPresent()){
+            List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerIdForCheckBill(date,optUserManager.get().getManagerId(),paymentStatus);
+            response.setStatus(1);
+            response.setMessage("List by user_manager");
+            response.setData(data);
+        }else if(optUserManagerMember.isPresent()){
+            List<TableCheckBill> data = tableCheckBillService.listByYearMonthDayAndManagerIdForCheckBill(date,optUserManagerMember.get().getManagerId(),paymentStatus);
+            response.setStatus(1);
+            response.setMessage("List by user_manager_member");
             response.setData(data);
         }else{
             response.setStatus(0);

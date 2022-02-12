@@ -38,4 +38,8 @@ public class TableCheckBillService {
     public List<TableCheckBill> listByYearMonthDayAndManagerId(LocalDate firstDate, LocalDate lastDate, int managerId,String paymentStatus,String paymentStatusCancel){
         return tableCheckBillRepository.findByDateBetweenAndManagerId(firstDate,lastDate,managerId,paymentStatus,paymentStatusCancel);
     }
+
+    public List<TableCheckBill> listByYearMonthDayAndManagerIdForCheckBill(LocalDate date, int managerId,String paymentStatus) {
+        return tableCheckBillRepository.findByDateAndManagerIdAndPaymentStatus(date,managerId,paymentStatus);
+    }
 }
