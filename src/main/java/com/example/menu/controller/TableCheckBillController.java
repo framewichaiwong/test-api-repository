@@ -51,17 +51,17 @@ public class TableCheckBillController {
 //        return response;
 //    }
 
-    @GetMapping("/list/{paymentStatus}")
-    public Object listTableCheckBill(@PathVariable String paymentStatus) {
+    @GetMapping("/list/{paymentStatusInProgress}/{paymentStatusAddImage}/{paymentStatusCheckImage}/{paymentStatusEditImage}")
+    public Object listTableCheckBill(@PathVariable String paymentStatusInProgress,@PathVariable String paymentStatusAddImage,@PathVariable String paymentStatusCheckImage,@PathVariable String paymentStatusEditImage) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         Optional<UserManagerMember> optUserManagerMember = contextUtil.getUserDataFromContext2(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
-            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManager.get().getManagerId(),paymentStatus);
+            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManager.get().getManagerId(),paymentStatusInProgress,paymentStatusAddImage,paymentStatusCheckImage,paymentStatusEditImage);
             response.setStatus(1);
             response.setData(listTableCheckBill);
         }else if(optUserManagerMember.isPresent()){
-            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManagerMember.get().getManagerId(),paymentStatus);
+            List<TableCheckBill> listTableCheckBill = tableCheckBillService.listByManagerIdAndPaymentStatus(optUserManagerMember.get().getManagerId(),paymentStatusInProgress,paymentStatusAddImage,paymentStatusCheckImage,paymentStatusEditImage);
             response.setStatus(1);
             response.setData(listTableCheckBill);
         }else{

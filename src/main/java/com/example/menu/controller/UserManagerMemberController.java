@@ -9,6 +9,7 @@ import com.example.menu.service.UserManagerMemberService;
 import com.example.menu.util.ContextUtil;
 import com.example.menu.util.EncoderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,6 +88,35 @@ public class UserManagerMemberController {
         }else {
             response.setStatus(0);
             response.setMessage("No have user_manager");
+        }
+        return response;
+    }
+
+    @PostMapping(value = "/update/{memberId}")
+    public Object updateUserMember(@PathVariable int memberId,UserManagerMember userManagerMember) {
+        APIResponse response = new APIResponse();
+        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+        if(optUserManager.isPresent()){
+            Optional<UserManagerMember> checkMemberId = userManagerMemberRepository.findById(memberId);
+            if(checkMemberId.isPresent()){
+                if(userManagerMember.getMemberPassword().isEmpty()){
+                    userManagerMember.setMemberPassword(checkMemberId.get().getMemberPassword());
+                    userManagerMemberService.updateMember(userManagerMember);
+                    response.setStatus(1);
+                    response.setMessage("update success by old password");
+                }else{
+                    userManagerMember.setMemberPassword(encoderUtil.passwordEncoder().encode(userManagerMember.getMemberPassword()));
+                    userManagerMemberService.updateMember(userManagerMember);
+                    response.setStatus(1);
+                    response.setMessage("update success by new password");
+                }
+            }else{
+                response.setStatus(0);
+                response.setMessage("No data user_member");
+            }
+        }else{
+            response.setStatus(0);
+            response.setMessage("No user_manager");
         }
         return response;
     }

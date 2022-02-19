@@ -27,8 +27,8 @@ public class TableCheckBillService {
 //        tableCheckBillRepository.deleteById(tableCheckBillId);
 //    }
 
-    public List<TableCheckBill> listByManagerIdAndPaymentStatus(int managerId,String paymentStatus) {
-        return tableCheckBillRepository.findByManagerIdAndPaymentStatus(managerId,paymentStatus);
+    public List<TableCheckBill> listByManagerIdAndPaymentStatus(int managerId,String paymentStatusInProgress,String paymentStatusAddImage,String paymentStatusCheckImage,String paymentStatusEditImage) {
+        return tableCheckBillRepository.findByManagerIdAndPaymentStatus(managerId,paymentStatusInProgress,paymentStatusAddImage,paymentStatusCheckImage,paymentStatusEditImage);
     }
 
     public TableCheckBill tableCheckBillUpdate(TableCheckBill tableCheckBill) {

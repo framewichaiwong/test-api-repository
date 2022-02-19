@@ -28,6 +28,9 @@ public class OtherMenu {
     @Column(name = "other_status")
     private String otherStatus;
 
+    @Column(name = "other_status_sale")
+    private String otherStatusSale;
+
     @Column(name = "manager_id")
     private int managerId;
 

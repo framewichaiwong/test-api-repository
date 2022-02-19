@@ -9,6 +9,7 @@ import com.example.menu.util.ContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,14 +93,27 @@ public class OtherMenuController {
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
             Optional<OtherMenu> findData = otherMenuRepository.findById(otherMenu.getOtherMenuId());
-            if(findData.isPresent()){
-                OtherMenu save = otherMenuService.otherMenuUpdate(otherMenu);
-                response.setStatus(1);
-                response.setMessage("Save Success");
-                response.setData(save);
+            OtherMenu checkOtherMenuName = otherMenuRepository.findByOtherMenuNameAndManagerId(otherMenu.getOtherMenuName(),optUserManager.get().getManagerId());
+             if(findData.isPresent()){
+                 if(checkOtherMenuName != null){
+                     if(findData.get().getOtherMenuName().contains(otherMenu.getOtherMenuName())){
+                         OtherMenu save = otherMenuService.otherMenuUpdate(otherMenu);
+                         response.setStatus(1);
+                         response.setMessage("update success");
+                         response.setData(save);
+                     }else{
+                         response.setStatus(0);
+                         response.setMessage("have name in otherMenu");
+                     }
+                 }else{
+                    OtherMenu save = otherMenuService.otherMenuUpdate(otherMenu);
+                    response.setStatus(1);
+                    response.setMessage("update success from otherMenuName null");
+                    response.setData(save);
+                 }
             }else {
                 response.setStatus(0);
-                response.setMessage("No OtherMenu");
+                response.setMessage("No data OtherMenu");
             }
         }else {
             response.setStatus(0);

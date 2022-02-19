@@ -24,4 +24,8 @@ public class UserManagerMemberService {
     public void deleteUserMemberId(int memberId) {
         userManagerMemberRepository.deleteById(memberId);
     }
+
+    public UserManagerMember updateMember(UserManagerMember userManagerMember) {
+        return  userManagerMemberRepository.save(userManagerMember);
+    }
 }

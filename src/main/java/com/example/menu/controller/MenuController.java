@@ -48,13 +48,25 @@ public class MenuController {
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
         if(optUserManager.isPresent()){
             Optional<Menu> checkMenuId = menuRepository.findById(menuId);
+            Menu checkName = menuRepository.findByNameAndManagerId(menu.getName(),optUserManager.get().getManagerId());
             if (checkMenuId.isPresent()) {
-                menuService.update(menu);
-                response.setStatus(1);
-                response.setMessage("Success");
+                if(checkName != null){
+                    if(checkMenuId.get().getName().contains(menu.getName())){
+                        menuService.update(menu);
+                        response.setStatus(1);
+                        response.setMessage("update success");
+                    }else{
+                       response.setStatus(0);
+                       response.setMessage("have name in menu");
+                    }
+                }else{
+                    menuService.update(menu);
+                    response.setStatus(1);
+                    response.setMessage("update success from name null");
+                }
             }else {
                 response.setStatus(0);
-                response.setMessage("Can't Success");
+                response.setMessage("No data menu");
             }
         }else{
             response.setStatus(0);
@@ -62,6 +74,26 @@ public class MenuController {
         }
         return response;
     }
+//    @PostMapping("/updateMenu/{menuId}")
+//    public Object updateMenu(@PathVariable int menuId, Menu menu){
+//        APIResponse response = new APIResponse();
+//        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
+//        if(optUserManager.isPresent()){
+//            Optional<Menu> checkMenuId = menuRepository.findById(menuId);
+//            if (checkMenuId.isPresent()) {
+//                menuService.update(menu);
+//                response.setStatus(1);
+//                response.setMessage("Success");
+//            }else {
+//                response.setStatus(0);
+//                response.setMessage("Can't Success");
+//            }
+//        }else{
+//            response.setStatus(0);
+//            response.setMessage("No UserManager");
+//        }
+//        return response;
+//    }
 
     @PostMapping("/deleteMenu/{menuId}")
     public Object deleteMenu(@PathVariable int menuId) {
