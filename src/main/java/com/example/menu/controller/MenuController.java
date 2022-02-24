@@ -80,7 +80,7 @@ public class MenuController {
 //        Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext();
 //        if(optUserManager.isPresent()){
 //            Optional<Menu> checkMenuId = menuRepository.findById(menuId);
-//            if (checkMenuId.isPresent()) {
+//            if(checkMenuId.isPresent()) {
 //                menuService.update(menu);
 //                response.setStatus(1);
 //                response.setMessage("Success");

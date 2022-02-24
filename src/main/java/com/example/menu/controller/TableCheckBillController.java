@@ -155,9 +155,8 @@ public class TableCheckBillController {
     @PostMapping(value = "/save")
     public Object saveNumberTable(TableCheckBill tableCheckBill) {
         APIResponse response = new APIResponse();
-        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTableAndPaymentStatus(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(),tableCheckBill.getPaymentStatus());
-        if(checkDb==null){
-            TableCheckBill saveTableCheckBill = tableCheckBillService.saveNumberTable(tableCheckBill);
+        TableCheckBill saveTableCheckBill = tableCheckBillService.saveNumberTable(tableCheckBill);
+        if(saveTableCheckBill != null){
             response.setStatus(1);
             response.setMessage("save success");
             response.setData(saveTableCheckBill);
