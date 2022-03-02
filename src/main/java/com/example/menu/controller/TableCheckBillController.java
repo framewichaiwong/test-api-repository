@@ -167,7 +167,22 @@ public class TableCheckBillController {
         return response;
     }
 
-    @PostMapping("/check/{paymentStatus}") /// For Customer(เช็กว่า "ยังไม่จ่าย" มีข้อมูลหรือไม่).
+    @PostMapping("/check/{statusInProgress}/{statusAddImage}/{statusCheckImage}/{statusEditImage}") /// For Customer(เช็กสเตตัส ยกเว้น "จ่ายแล้ว").
+    public Object checkNumberTablePaymentStatus(@PathVariable String statusInProgress, @PathVariable String statusAddImage, @PathVariable String statusCheckImage, @PathVariable String statusEditImage, TableCheckBill tableCheckBill) {
+        APIResponse response = new APIResponse();
+        TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTable(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(), statusInProgress, statusAddImage, statusCheckImage, statusEditImage);
+        if(checkDb != null){
+            response.setStatus(1);
+            response.setMessage("Have Data");
+            response.setData(checkDb);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not Have Data");
+        }
+        return response;
+    }
+
+    @PostMapping("/check/{paymentStatus}") /// For Customer(เช็กว่ามีมีข้อมูลหรือไม่).
     public Object checkNumberTableNotPay(@PathVariable String paymentStatus, TableCheckBill tableCheckBill) {
         APIResponse response = new APIResponse();
         TableCheckBill checkDb = tableCheckBillRepository.findByManagerIdAndNumberTableAndPaymentStatus(tableCheckBill.getManagerId(), tableCheckBill.getNumberTable(), paymentStatus);

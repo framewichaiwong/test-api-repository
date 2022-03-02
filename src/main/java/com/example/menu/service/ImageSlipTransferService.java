@@ -28,11 +28,12 @@ public class ImageSlipTransferService {
         File file = new File(newPath);
         try {
             fileImg.transferTo(file);
+            imageSlipTransfer.setImageSlipName(nameImage);
+            return imageSlipTransferRepository.save(imageSlipTransfer);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        imageSlipTransfer.setImageSlipName(nameImage);
-        return imageSlipTransferRepository.save(imageSlipTransfer);
     }
 
     public byte[] imageSlipTransferList(String imageSlipName) throws IOException{

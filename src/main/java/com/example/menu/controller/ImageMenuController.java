@@ -27,14 +27,19 @@ public class ImageMenuController {
     private ContextUtil contextUtil;
 
     @PostMapping("/save")
-    public Object insertImage(@RequestParam("fileIMG") MultipartFile multipartFile, ImageMenu imageMenu) {
+    public Object insertImage(@RequestParam(value = "fileIMG") MultipartFile multipartFile, ImageMenu imageMenu) {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            String img = imageMenuService.insertImageMenu(multipartFile, imageMenu, optUserManager.get().getManagerId());
-            response.setStatus(1);
-            response.setMessage("save Image Success");
-            response.setData(img);
+            ImageMenu img = imageMenuService.insertImageMenu(multipartFile, imageMenu, optUserManager.get().getManagerId());
+            if(img != null){
+                response.setStatus(1);
+                response.setMessage("save Image Success");
+                response.setData(img);
+            }else{
+                response.setStatus(0);
+                response.setMessage("save Image Error");
+            }
         }else {
             response.setStatus(0);
             response.setMessage("No UserManager");
@@ -49,16 +54,21 @@ public class ImageMenuController {
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
             List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
-                byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
-                Map<String,Object> ret = new HashMap<>();
-                ret.put("imageId",managerIdAndTypeMenu.getImageId());
-                ret.put("dataImage",imgFile);
-                imgList.add(ret);
+            if(checkManagerIdAndTypeMenu != null){
+                for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu){
+                    byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
+                    Map<String,Object> ret = new HashMap<>();
+                    ret.put("imageId",managerIdAndTypeMenu.getImageId());
+                    ret.put("dataImage",imgFile);
+                    imgList.add(ret);
+                }
+                response.setStatus(1);
+                response.setMessage("List Image Success");
+                response.setData(imgList);
+            }else{
+                response.setStatus(0);
+                response.setMessage("no have image");
             }
-            response.setStatus(1);
-            response.setMessage("List Image Success");
-            response.setData(imgList);
         }else{
             response.setStatus(0);
             response.setMessage("No UserManager");
@@ -152,13 +162,18 @@ public class ImageMenuController {
        APIResponse response = new APIResponse();
        List<byte[]> imgList = new ArrayList<>();
        List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(managerId, typeMenu,menuId);
-       for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
-           byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
-           imgList.add(imgFile);
+       if(checkManagerIdAndTypeMenu.isEmpty()){
+           response.setStatus(0);
+           response.setMessage("na have image");
+       }else{
+           for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
+               byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
+               imgList.add(imgFile);
+           }
+           response.setStatus(1);
+           response.setMessage("List Image Success");
+           response.setData(imgList);
        }
-       response.setStatus(1);
-       response.setMessage("List Image Success");
-       response.setData(imgList);
        return response;
    }
 }

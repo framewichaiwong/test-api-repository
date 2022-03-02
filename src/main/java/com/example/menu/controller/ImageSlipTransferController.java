@@ -30,13 +30,13 @@ public class ImageSlipTransferController {
     public Object imageSlipTransferSave(@RequestParam("fileImg") MultipartFile fileImg, ImageSlipTransfer imageSlipTransfer){
         APIResponse response = new APIResponse();
         ImageSlipTransfer imgSlipTransfer = imageSlipTransferService.imageSlipTransferSave(fileImg,imageSlipTransfer);
-        if(imgSlipTransfer == null){
-            response.setStatus(0);
-            response.setMessage("Not Success");
-        }else{
+        if(imgSlipTransfer != null){
             response.setStatus(1);
             response.setMessage("Save Success");
             response.setData(imgSlipTransfer);
+        }else{
+            response.setStatus(0);
+            response.setMessage("Not Success");
         }
         return response;
     }

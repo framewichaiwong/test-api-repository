@@ -22,21 +22,21 @@ public class ImageMenuService {
     @Autowired
     private ImageMenuRepository imageMenuRepository;
 
-    public String insertImageMenu(MultipartFile multipartFile, ImageMenu imageMenu, int managerId){
+    public ImageMenu insertImageMenu(MultipartFile multipartFile, ImageMenu imageMenu, int managerId){
         String idImage = new BigInteger(130, new SecureRandom()).toString();
         String nameImage = idImage + ".png";
         String newPath = configPath + "/" + nameImage;
         File file = new File(newPath);
         try {
             multipartFile.transferTo(file);
+            imageMenu.setNameImage(nameImage);
+            imageMenu.setManagerId(managerId);
+            imageMenu.setTypeMenu(imageMenu.getTypeMenu());
+            return imageMenuRepository.save(imageMenu);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        imageMenu.setNameImage(nameImage);
-        imageMenu.setManagerId(managerId);
-        imageMenu.setTypeMenu(imageMenu.getTypeMenu());
-        imageMenuRepository.save(imageMenu);
-        return newPath;
     }
     
     public byte[] getImageFile(String nameImage) throws IOException {
@@ -55,44 +55,14 @@ public class ImageMenuService {
         String newPath = configPath + "/" + nameImage;
         try {
             File deleteFileFormPath = new File(newPath);
-            boolean deleteFile = deleteFileFormPath.delete();
-            if (deleteFile){
+            if (deleteFileFormPath.delete()){
                 imageMenuRepository.deleteById(imageId);
                 return true;
             }
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
         return false;
     }
-
-    /*public boolean updateImageFile(MultipartFile multipartFile, ImageFile imageFile, String nameImage) {
-        String newPath = path + "/" + nameImage;
-        try {
-            File deleteFileFromPath = new File(newPath);
-            boolean deleteFile = deleteFileFromPath.delete();
-            if(deleteFile){
-                System.out.print("----- Delete Image from Folder -----");
-                String idImage = new BigInteger(130,new SecureRandom()).toString();
-                String nameImg = idImage + ".png";
-                String namePath = path + "/" + nameImg;
-                File file = new File(namePath);
-                try {
-                    multipartFile.transferTo(file);
-                    System.out.print("---------- Create & Save Image Success ----------");
-                }catch (IOException e){
-                    e.printStackTrace();
-                    System.out.print("---------- Error 2 ----------");
-                }
-                imageFile.setNameImage(nameImg);
-                imageFileRepository.save(imageFile);
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("---------- Error 1 ----------");
-        }
-        return false;
-    }*/
-
 }

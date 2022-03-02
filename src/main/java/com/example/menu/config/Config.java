@@ -15,6 +15,7 @@ public class Config {
             "/tableCheckBill/save",
             "/tableCheckBill/updateByCustomer",
             "/tableCheckBill/check/{paymentStatus}",
+            "/tableCheckBill/check/{statusInProgress}/{statusAddImage}/{statusCheckImage}/{statusEditImage}",
             "/orderCheckBill/save",
             "/image/list/{managerId}/{menuId}/{typeMenu}",
             "/test/index",

@@ -11,6 +11,9 @@ import java.util.List;
 public interface TableCheckBillRepository extends JpaRepository<TableCheckBill,Integer> {
     TableCheckBill findByManagerIdAndNumberTableAndPaymentStatus(int managerId,int numberTable,String paymentStatus);
 
+    @Query(value = "SELECT d FROM table_check_bill d WHERE d.managerId=:managerId AND d.numberTable=:numberTable AND (d.paymentStatus=:statusInProgress OR d.paymentStatus=:statusAddImage OR d.paymentStatus=:statusCheckImage OR d.paymentStatus=:statusEditImage)")
+    TableCheckBill findByManagerIdAndNumberTable(@Param("managerId") int managerId, @Param("numberTable") int numberTable, @Param("statusInProgress") String statusInProgress, @Param("statusAddImage") String statusAddImage, @Param("statusCheckImage") String statusCheckImage, @Param("statusEditImage") String statusEditImage);
+
     @Query(value = "SELECT d FROM table_check_bill d WHERE d.managerId=:managerId AND (d.paymentStatus=:paymentStatusInProgress OR d.paymentStatus=:paymentStatusAddImage OR d.paymentStatus=:paymentStatusCheckImage OR d.paymentStatus=:paymentStatusEditImage)")
     List<TableCheckBill> findByManagerIdAndPaymentStatus(@Param("managerId") int managerId,@Param("paymentStatusInProgress") String paymentStatusInProgress,@Param("paymentStatusAddImage") String paymentStatusAddImage,@Param("paymentStatusCheckImage") String paymentStatusCheckImage,@Param("paymentStatusEditImage") String paymentStatusEditImage);
 
