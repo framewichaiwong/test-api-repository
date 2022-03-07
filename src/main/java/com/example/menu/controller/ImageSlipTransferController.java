@@ -27,16 +27,21 @@ public class ImageSlipTransferController {
     // Set of Customer.
 
     @PostMapping(value = "/save")
-    public Object imageSlipTransferSave(@RequestParam("fileImg") MultipartFile fileImg, ImageSlipTransfer imageSlipTransfer){
+    public Object imageSlipTransferSave(@RequestParam(value = "fileImg",required = false) MultipartFile fileImg, ImageSlipTransfer imageSlipTransfer){
         APIResponse response = new APIResponse();
-        ImageSlipTransfer imgSlipTransfer = imageSlipTransferService.imageSlipTransferSave(fileImg,imageSlipTransfer);
-        if(imgSlipTransfer != null){
-            response.setStatus(1);
-            response.setMessage("Save Success");
-            response.setData(imgSlipTransfer);
-        }else{
-            response.setStatus(0);
-            response.setMessage("Not Success");
+        try {
+            Optional<ImageSlipTransfer> imgSlipTransfer = imageSlipTransferService.imageSlipTransferSave(fileImg,imageSlipTransfer);
+            if(imgSlipTransfer.isPresent()){
+                response.setStatus(1);
+                response.setMessage("Save Success");
+                response.setData(imgSlipTransfer);
+            }else{
+                response.setStatus(0);
+                response.setMessage("Not Success");
+            }
+        }catch (Exception e){
+            response.setStatus(-1);
+            response.setMessage("Error : " + e.toString());
         }
         return response;
     }
@@ -44,9 +49,12 @@ public class ImageSlipTransferController {
     @GetMapping(value = "/list/{tableCheckBillId}")
     public Object imageSlipTransferList(@PathVariable int tableCheckBillId) throws IOException {
         APIResponse response = new APIResponse();
-        List<Object> listImage = new ArrayList<>();
         List<ImageSlipTransfer> imageSlipTransfer = imageSlipTransferRepository.findByTableCheckBillId(tableCheckBillId);
-        if(imageSlipTransfer != null){
+        if(imageSlipTransfer.isEmpty()){
+            response.setStatus(0);
+            response.setMessage("No Data image_slip_transfer");
+        }else {
+            List<Object> listImage = new ArrayList<>();
             for(ImageSlipTransfer imgSlip : imageSlipTransfer){
                 var img = imageSlipTransferService.imageSlipTransferList(imgSlip.getImageSlipName());
                 Map<String,Object> ret = new HashMap<>();
@@ -60,9 +68,6 @@ public class ImageSlipTransferController {
             response.setStatus(1);
             response.setMessage("List Success");
             response.setData(listImage);
-        }else {
-            response.setStatus(0);
-            response.setMessage("No Data image_slip_transfer");
         }
         return response;
     }
@@ -72,13 +77,18 @@ public class ImageSlipTransferController {
         APIResponse response = new APIResponse();
         Optional<ImageSlipTransfer> checkImageSlip = imageSlipTransferRepository.findById(imageSlipId);
         if(checkImageSlip.isPresent()){
-            boolean check = imageSlipTransferService.imageSlipTransferRemove(imageSlipId,checkImageSlip.get().getImageSlipName());
-            if(check){
-                response.setStatus(1);
-                response.setMessage("Remove Success");
-            }else{
-                response.setStatus(0);
-                response.setMessage("can't remove");
+            try {
+                boolean check = imageSlipTransferService.imageSlipTransferRemove(imageSlipId,checkImageSlip.get().getImageSlipName());
+                if(check){
+                    response.setStatus(1);
+                    response.setMessage("Remove Success");
+                }else{
+                    response.setStatus(0);
+                    response.setMessage("can't remove");
+                }
+            }catch (Exception e){
+                response.setStatus(-1);
+                response.setMessage("Error : " + e.toString());
             }
         }else{
             response.setStatus(0);

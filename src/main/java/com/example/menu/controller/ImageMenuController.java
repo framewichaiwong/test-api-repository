@@ -27,18 +27,22 @@ public class ImageMenuController {
     private ContextUtil contextUtil;
 
     @PostMapping("/save")
-    public Object insertImage(@RequestParam(value = "fileIMG") MultipartFile multipartFile, ImageMenu imageMenu) {
+    public Object insertImage(@RequestParam(value = "fileIMG",required = false) MultipartFile multipartFile, ImageMenu imageMenu){
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            ImageMenu img = imageMenuService.insertImageMenu(multipartFile, imageMenu, optUserManager.get().getManagerId());
-            if(img != null){
-                response.setStatus(1);
-                response.setMessage("save Image Success");
-                response.setData(img);
-            }else{
-                response.setStatus(0);
-                response.setMessage("save Image Error");
+            try {
+                Optional<ImageMenu> img = imageMenuService.insertImageMenu(multipartFile, imageMenu, optUserManager.get().getManagerId());
+                if(img.isPresent()){
+                    response.setStatus(1);
+                    response.setMessage("save Image Success");
+                    response.setData(img);
+                }else{
+                    response.setStatus(0);
+                    response.setMessage("save Image Error");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }else {
             response.setStatus(0);
@@ -50,11 +54,14 @@ public class ImageMenuController {
     @GetMapping("/list/{menuId}/{typeMenu}")
     public Object getImage(@PathVariable String typeMenu, @PathVariable int menuId) throws IOException {
         APIResponse response = new APIResponse();
-        List<Object> imgList = new ArrayList<>();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if (optUserManager.isPresent()) {
             List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(optUserManager.get().getManagerId(), typeMenu,menuId);
-            if(checkManagerIdAndTypeMenu != null){
+            if(checkManagerIdAndTypeMenu.isEmpty()){
+                response.setStatus(0);
+                response.setMessage("no have image");
+            }else{
+                List<Object> imgList = new ArrayList<>();
                 for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu){
                     byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
                     Map<String,Object> ret = new HashMap<>();
@@ -65,9 +72,6 @@ public class ImageMenuController {
                 response.setStatus(1);
                 response.setMessage("List Image Success");
                 response.setData(imgList);
-            }else{
-                response.setStatus(0);
-                response.setMessage("no have image");
             }
         }else{
             response.setStatus(0);
@@ -81,20 +85,18 @@ public class ImageMenuController {
         APIResponse response = new APIResponse();
         Optional<UserManager> optUserManager = contextUtil.getUserDataFromContext(); /// use token for pull user data.
         if(optUserManager.isPresent()){
-            List<ImageMenu> optImageMenu = imageMenuRepository.findByMenuId(menuId);
-            for (ImageMenu imageMenu : optImageMenu){
-                try {
-                    boolean deleteImg = imageMenuService.deleteImageFile(imageMenu.getImageId(), imageMenu.getNameImage());
-                    if (deleteImg) {
+            try {
+                List<ImageMenu> optImageMenu = imageMenuRepository.findByMenuId(menuId);
+                for (int i=0; i<optImageMenu.size(); i++){
+                    boolean deleteImg = imageMenuService.deleteImageFile(optImageMenu.get(i).getImageId(), optImageMenu.get(i).getNameImage());
+                    if (deleteImg && optImageMenu.size() == i+1) {
                         response.setStatus(1);
                         response.setMessage("Delete Image Success");
-                    }else {
-                        response.setStatus(0);
-                        response.setMessage("Can't Delete");
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            }catch (Exception e){
+                response.setStatus(-1);
+                response.setMessage("Error : " + e.toString());
             }
         }else{
             response.setStatus(0);
@@ -110,13 +112,19 @@ public class ImageMenuController {
         if(optUserManager.isPresent()){
             Optional<ImageMenu> checkImageId = imageMenuRepository.findById(imageId);
             if(checkImageId.isPresent()){
-                boolean deleteSuccess = imageMenuService.deleteImageFile(checkImageId.get().getImageId(),checkImageId.get().getNameImage());
-                if(deleteSuccess){
-                    response.setStatus(1);
-                    response.setMessage("Delete Success");
-                }else{
+                try {
+                    boolean deleteSuccess = imageMenuService.deleteImageFile(checkImageId.get().getImageId(),checkImageId.get().getNameImage());
+                    if(deleteSuccess){
+                        response.setStatus(1);
+                        response.setMessage("Delete Success");
+                    }else{
+                        response.setStatus(0);
+                        response.setMessage("Can't Delete");
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                     response.setStatus(0);
-                    response.setMessage("Can't Delete");
+                    response.setMessage("Error : " + e.toString());
                 }
             }else{
                 response.setStatus(0);
@@ -160,12 +168,12 @@ public class ImageMenuController {
    @GetMapping("/list/{managerId}/{menuId}/{typeMenu}")
    public Object getImageForCustomer(@PathVariable int managerId,@PathVariable String typeMenu,@PathVariable int menuId) throws IOException {
        APIResponse response = new APIResponse();
-       List<byte[]> imgList = new ArrayList<>();
        List<ImageMenu> checkManagerIdAndTypeMenu = imageMenuRepository.findByManagerIdAndTypeMenuAndMenuId(managerId, typeMenu,menuId);
        if(checkManagerIdAndTypeMenu.isEmpty()){
            response.setStatus(0);
-           response.setMessage("na have image");
+           response.setMessage("no have image");
        }else{
+           List<Object> imgList = new ArrayList<>();
            for (ImageMenu managerIdAndTypeMenu : checkManagerIdAndTypeMenu) {
                byte[] imgFile = imageMenuService.getImageFile(managerIdAndTypeMenu.getNameImage());
                imgList.add(imgFile);

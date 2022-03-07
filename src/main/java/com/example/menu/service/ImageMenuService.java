@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @Service
 public class ImageMenuService {
@@ -22,20 +23,22 @@ public class ImageMenuService {
     @Autowired
     private ImageMenuRepository imageMenuRepository;
 
-    public ImageMenu insertImageMenu(MultipartFile multipartFile, ImageMenu imageMenu, int managerId){
-        String idImage = new BigInteger(130, new SecureRandom()).toString();
-        String nameImage = idImage + ".png";
-        String newPath = configPath + "/" + nameImage;
-        File file = new File(newPath);
+    public Optional<ImageMenu> insertImageMenu(MultipartFile multipartFile, ImageMenu imageMenu, int managerId) {
         try {
+            String idImage = new BigInteger(130, new SecureRandom()).toString();
+            String nameImage = idImage + ".png";
+            String newPath = configPath + "/" + nameImage;
+            File file = new File(newPath);
+
             multipartFile.transferTo(file);
+
             imageMenu.setNameImage(nameImage);
             imageMenu.setManagerId(managerId);
             imageMenu.setTypeMenu(imageMenu.getTypeMenu());
-            return imageMenuRepository.save(imageMenu);
+            return Optional.of(imageMenuRepository.save(imageMenu));
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return Optional.empty();
         }
     }
     
@@ -52,8 +55,8 @@ public class ImageMenuService {
     }
 
     public boolean deleteImageFile(int imageId, String nameImage) {
-        String newPath = configPath + "/" + nameImage;
         try {
+            String newPath = configPath + "/" + nameImage;
             File deleteFileFormPath = new File(newPath);
             if (deleteFileFormPath.delete()){
                 imageMenuRepository.deleteById(imageId);
