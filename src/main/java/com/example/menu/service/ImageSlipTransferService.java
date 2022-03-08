@@ -26,7 +26,7 @@ public class ImageSlipTransferService {
         try {
             String idImage = new BigInteger(130,new Random()).toString();
             String nameImage = idImage + ".png";
-            String newPath = configPath + "/" + nameImage;
+            String newPath = configPath + File.separator + nameImage; // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             File file = new File(newPath);
 
             fileImg.transferTo(file);
@@ -40,7 +40,7 @@ public class ImageSlipTransferService {
 
     public byte[] imageSlipTransferList(String imageSlipName) throws IOException{
         try {
-            InputStream inImg = new FileInputStream(configPath + "/" + imageSlipName);
+            InputStream inImg = new FileInputStream(configPath + File.separator + imageSlipName); // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             var img = IOUtils.toByteArray(inImg);
             inImg.close();
             return img;
@@ -51,7 +51,7 @@ public class ImageSlipTransferService {
 
     public boolean imageSlipTransferRemove(int imageSlipId, String imageSlipName) {
         try {
-            String newPath = configPath + "/" + imageSlipName;
+            String newPath = configPath + File.separator + imageSlipName; // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             File deleteFileFromPath = new File(newPath);
             if(deleteFileFromPath.delete()){
                 imageSlipTransferRepository.deleteById(imageSlipId);

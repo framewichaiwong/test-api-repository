@@ -27,7 +27,7 @@ public class ImageMenuService {
         try {
             String idImage = new BigInteger(130, new SecureRandom()).toString();
             String nameImage = idImage + ".png";
-            String newPath = configPath + "/" + nameImage;
+            String newPath = configPath + File.separator + nameImage; // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             File file = new File(newPath);
 
             multipartFile.transferTo(file);
@@ -44,7 +44,7 @@ public class ImageMenuService {
     
     public byte[] getImageFile(String nameImage) throws IOException {
         try {
-           InputStream inImg = new FileInputStream(configPath + "/" + nameImage);
+           InputStream inImg = new FileInputStream(configPath + File.separator + nameImage); // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             var img = IOUtils.toByteArray(inImg);
             inImg.close();
             return img;
@@ -56,7 +56,7 @@ public class ImageMenuService {
 
     public boolean deleteImageFile(int imageId, String nameImage) {
         try {
-            String newPath = configPath + "/" + nameImage;
+            String newPath = configPath + File.separator + nameImage; // File.separator ใช้ตาม OS ที่ใช้งาน ("/" , "\")
             File deleteFileFormPath = new File(newPath);
             if (deleteFileFormPath.delete()){
                 imageMenuRepository.deleteById(imageId);
