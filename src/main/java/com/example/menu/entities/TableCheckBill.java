@@ -5,14 +5,13 @@ import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 @Data
 @ToString
@@ -40,16 +39,11 @@ public class TableCheckBill {
     private int priceTotal;
 
     @Column(name = "date")
-    @CreationTimestamp
-//    @UpdateTimestamp
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy HH:mm:ss", timezone= "Asia/Bangkok")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy", timezone= "Asia/Bangkok")
-    private LocalDate date;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    private LocalDate date = LocalDate.now(ZoneId.of("Asia/Bangkok"));
 
     @Column(name = "time")
-    @CreationTimestamp
-//    @UpdateTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm:ss", timezone= "Asia/Bangkok")
-    private LocalTime time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm:ss")
+    private LocalTime time = LocalTime.now(ZoneId.of("Asia/Bangkok"));
 
 }
